@@ -1,0 +1,164 @@
+site_name: Customer Management API
+site_description: Production-ready Spring Boot REST API for customer management with comprehensive testing and Docker support
+site_author: Alok Kulkarni
+site_url: https://alokkulkarni.github.io/copilotSkills/TestJavaProgrammer
+repo_url: https://github.com/alokkulkarni/copilotSkills
+repo_name: alokkulkarni/copilotSkills
+edit_uri: edit/main/TestJavaProgrammer/docs/
+
+# Copyright
+copyright: Copyright &copy; 2026 Alok Kulkarni
+
+# Theme Configuration
+theme:
+  name: material
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/images/logo.png
+  favicon: assets/images/favicon.ico
+
+# Navigation
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+      - Docker Setup: getting-started/docker.md
+  - User Guide:
+      - Configuration: user-guide/configuration.md
+      - API Usage: user-guide/api-usage.md
+      - Pagination: user-guide/pagination.md
+      - Error Handling: user-guide/error-handling.md
+  - API Reference:
+      - Overview: api-reference/overview.md
+      - Endpoints: api-reference/endpoints.md
+      - Models: api-reference/models.md
+      - OpenAPI Spec: api-reference/openapi.md
+  - Development:
+      - Architecture: development/architecture.md
+      - Project Structure: development/project-structure.md
+      - Testing: development/testing.md
+      - Contributing: development/contributing.md
+  - Deployment:
+      - Docker Deployment: deployment/docker.md
+      - CI/CD Pipeline: deployment/ci-cd.md
+  - Reference:
+      - Changelog: reference/changelog.md
+      - FAQ: reference/faq.md
+      - Security: reference/security.md
+      - License: reference/license.md
+
+# Plugins
+plugins:
+  - search:
+      lang: en
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+  - minify:
+      minify_html: true
+
+# Extensions
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      toc_depth: 3
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Extra Configuration
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/alokkulkarni
+      name: GitHub
+  analytics:
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback! Help us improve by using our 
+            <a href="https://github.com/alokkulkarni/copilotSkills/issues/new" target="_blank" rel="noopener">feedback form</a>.
+
+# Additional CSS
+extra_css:
+  - assets/stylesheets/extra.css
+
+# Additional JavaScript
+extra_javascript:
+  - assets/javascripts/extra.js

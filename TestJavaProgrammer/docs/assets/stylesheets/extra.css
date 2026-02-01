@@ -1,0 +1,131 @@
+/* Custom CSS for MkDocs Material Theme */
+
+/* Custom color scheme overrides */
+:root {
+  --md-primary-fg-color: #1976d2;
+  --md-accent-fg-color: #1976d2;
+}
+
+/* Card styling for grid layouts */
+.grid.cards {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Enhanced code blocks */
+.highlight {
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* Button enhancements */
+.md-button {
+  margin: 0.5rem 0.25rem;
+}
+
+/* Custom admonition styles */
+.admonition {
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+/* Table enhancements */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+table th {
+  background-color: var(--md-primary-fg-color);
+  color: white;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* Center align home page elements */
+.center-content {
+  text-align: center;
+}
+
+/* Status badge styling */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0.25rem;
+}
+
+.badge-success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.badge-info {
+  background-color: #2196f3;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #ff9800;
+  color: white;
+}
+
+/* Improve spacing for lists */
+ul, ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+li {
+  margin: 0.5rem 0;
+}
+
+/* Enhanced inline code */
+code {
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  background-color: var(--md-code-bg-color);
+  font-size: 0.9em;
+}
+
+/* Footer customization */
+.md-footer {
+  margin-top: 3rem;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .grid.cards {
+    grid-template-columns: 1fr;
+  }
+  
+  table {
+    font-size: 0.875rem;
+  }
+  
+  .md-button {
+    display: block;
+    margin: 0.5rem 0;
+  }
+}
+
+/* Print styles */
+@media print {
+  .md-header,
+  .md-footer,
+  .md-sidebar {
+    display: none;
+  }
+  
+  .md-content {
+    max-width: 100%;
+  }
+}
