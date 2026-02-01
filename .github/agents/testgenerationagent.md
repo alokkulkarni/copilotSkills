@@ -52,6 +52,11 @@ After generating tests, you MUST update documentation:
 - Consider invoking `@documentagent` for comprehensive documentation updates
 - Ensure test files have clear comments explaining test strategies
 
+**Optional Documentation (Highly Recommended):**
+- 🔵 Add testing architecture diagram to README showing test structure and dependencies
+- 🔵 Add troubleshooting/FAQ section for common testing issues and solutions
+- 🔵 Create or update CODE_OF_CONDUCT.md file if not present
+
 #### 4. Test Generation Guidelines
 
 **Context Management - CRITICAL:**

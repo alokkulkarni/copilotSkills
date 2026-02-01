@@ -66,6 +66,11 @@ After completing any code generation or updates, you MUST update documentation:
 - Ensure all public methods have proper Javadoc comments
 - Update code-level documentation for complex algorithms or business logic
 
+**Optional Documentation (Highly Recommended):**
+- 🔵 Add architecture diagram to README (for significant architectural changes)
+- 🔵 Add troubleshooting/FAQ section to documentation
+- 🔵 Create or update CODE_OF_CONDUCT.md file if not present
+
 **CRITICAL Execution Requirements:**
 - **Input Validation**: ALWAYS validate all input variables before processing
   - Check for null values, empty strings, invalid ranges

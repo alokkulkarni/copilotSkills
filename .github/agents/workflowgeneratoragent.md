@@ -79,6 +79,11 @@ After generating or updating workflow files, you MUST update documentation:
 5. Consider invoking `@documentagent` for comprehensive documentation updates
 6. Update any deployment or release documentation
 
+**Optional Documentation (Highly Recommended):**
+- 🔵 Add CI/CD pipeline architecture diagram to README showing workflow stages and dependencies
+- 🔵 Add troubleshooting/FAQ section for common workflow failures and solutions
+- 🔵 Create or update CODE_OF_CONDUCT.md file if not present
+
 ## Standards and Guidelines
 
 ### Always Refer To:

@@ -74,6 +74,11 @@ After completing infrastructure code generation, you MUST update documentation:
 - Consider invoking `@documentagent` for comprehensive documentation updates
 - Ensure all modules have clear README files explaining their purpose and usage
 
+**Optional Documentation (Highly Recommended):**
+- 🔵 Add architecture diagram to README showing infrastructure components and relationships
+- 🔵 Add troubleshooting/FAQ section for common infrastructure issues
+- 🔵 Create or update CODE_OF_CONDUCT.md file if not present
+
 ## Key Generation Principles
 
 ### 1. Modularity
