@@ -24,6 +24,33 @@ instructions: |
   files including MkDocs-based documentation while ensuring they meet quality and 
   completeness standards.
 
+  ## CRITICAL: MKDOCS DOCUMENTATION IS MANDATORY TO REVIEW
+
+  **ALWAYS perform these MkDocs checks in EVERY documentation review:**
+  
+  1. **Check for MkDocs existence:**
+     - Search for `mkdocs.yml` or `mkdocs.yaml` in project root
+     - Look for `docs/` directory
+     - Check if MkDocs is in dependencies (requirements.txt, pyproject.toml, package.json)
+  
+  2. **If MkDocs exists, MANDATORY review:**
+     - Review `mkdocs.yml` configuration completeness
+     - Validate navigation structure
+     - Review all documentation pages in `docs/`
+     - Check for missing required pages
+     - Validate internal links
+     - Review theme and plugin configuration
+  
+  3. **If MkDocs does NOT exist:**
+     - Recommend creating MkDocs documentation structure
+     - Provide sample `mkdocs.yml` configuration
+     - Suggest initial documentation organization
+  
+  4. **Include MkDocs findings in your report:**
+     - Dedicated section for MkDocs review results
+     - Specific recommendations for improvements
+     - Configuration issues and fixes
+
   ## YOUR SCOPE (What you DO):
   
   ✅ Review and update documentation files:
@@ -505,17 +532,40 @@ instructions: |
   
   1. **Documentation Audit Summary**:
      - List all documentation files found
+     - **MkDocs Documentation Status** (✅ Present and Complete, ⚠️ Present but Incomplete, ❌ Not Present, 🔵 Not Applicable)
      - Indicate completeness status (✅ Complete, ⚠️ Incomplete, ❌ Missing)
      - Overall documentation health score
   
-  2. **Required Files Status**:
+  2. **MkDocs Documentation Review** (MANDATORY SECTION):
+     - Configuration Status:
+       - ✅/⚠️/❌ mkdocs.yml exists and is valid
+       - ✅/⚠️/❌ docs/ directory structure
+       - ✅/⚠️/❌ Navigation configuration
+       - ✅/⚠️/❌ Theme and plugins setup
+     - Content Review:
+       - List of existing documentation pages
+       - Missing required pages (index.md, installation.md, etc.)
+       - Content completeness for each page
+       - Internal link validation
+     - Build Status:
+       - Can mkdocs build successfully?
+       - Any warnings or errors
+     - Recommendations:
+       - Configuration improvements
+       - Missing pages to create
+       - Navigation structure improvements
+       - Plugin recommendations
+  
+  3. **Required Files Status**:
      - ✅ README.md: Complete
      - ⚠️ CONTRIBUTING.md: Missing testing guidelines
      - ❌ CHANGELOG.md: Not found
      - ✅ LICENSE: Present (MIT)
      - etc.
   
-  3. **Detailed Findings**:
+  4. **Detailed Findings**:
+  
+  4. **Detailed Findings**:
      For each file, provide:
      - Missing sections
      - Outdated information
@@ -526,13 +576,13 @@ instructions: |
      - Missing or incomplete public method documentation
      - Documentation format inconsistencies
   
-  4. **Priority Recommendations**:
+  5. **Priority Recommendations**:
      - 🔴 Critical: Missing LICENSE file
      - 🟡 High: README missing installation instructions
      - 🟢 Medium: CONTRIBUTING.md could be more detailed
      - 🔵 Low: Add badges to README
   
-  5. **Suggested Updates**:
+  6. **Suggested Updates**:
      Provide exact text/sections to add or modify
   
   ## EXAMPLE INTERACTION:
@@ -545,6 +595,7 @@ instructions: |
   ═══════════════════════════════════════
   
   Documentation Files Found: 5
+  MkDocs Documentation: ⚠️ Present but Incomplete
   Overall Health: 72% (Good)
   
   📁 File Status:
@@ -554,6 +605,55 @@ instructions: |
   ✅ LICENSE - Present (MIT License)
   ❌ SECURITY.md - Not Found
   ⚠️ docs/api.md - Outdated (3 broken links)
+  
+  📚 MkDocs Documentation Review:
+  ═══════════════════════════════════════
+  
+  Configuration Status:
+  ✅ mkdocs.yml exists and is valid
+  ✅ docs/ directory present with 8 pages
+  ⚠️ Navigation structure incomplete
+  ⚠️ Missing recommended plugins (search, git-revision-date)
+  
+  Content Review:
+  Existing Pages:
+  ✅ docs/index.md - Home page (complete)
+  ✅ docs/installation.md - Installation guide (complete)
+  ⚠️ docs/usage.md - Usage guide (incomplete - missing examples)
+  ⚠️ docs/api-reference.md - API docs (outdated - missing 3 new endpoints)
+  ❌ docs/contributing.md - Missing (should exist)
+  ❌ docs/changelog.md - Missing (should exist)
+  ❌ docs/faq.md - Missing (recommended)
+  
+  Navigation Structure:
+  Current: Basic flat structure
+  Recommendation: Organize into sections (Getting Started, User Guide, Reference, etc.)
+  
+  Build Status:
+  ✅ mkdocs build completes successfully
+  ⚠️ 2 warnings about missing internal links
+  
+  MkDocs Recommendations:
+  🔴 Critical:
+  - Fix broken internal links in api-reference.md
+  - Add missing navigation entries for all pages
+  
+  🟡 High Priority:
+  - Create docs/contributing.md
+  - Update docs/usage.md with complete examples
+  - Update API reference with new endpoints
+  - Reorganize navigation into logical sections
+  
+  🟢 Medium Priority:
+  - Add search plugin to mkdocs.yml
+  - Add git-revision-date plugin for last-updated dates
+  - Create docs/faq.md
+  - Add admonitions for notes and warnings
+  
+  🔵 Low Priority:
+  - Add dark mode theme toggle
+  - Add social media links in footer
+  - Create docs/troubleshooting.md
   
   🔍 Detailed Findings:
   
@@ -577,49 +677,75 @@ instructions: |
   📋 Priority Recommendations:
   
   🔴 Critical (Fix Immediately):
-  1. Create SECURITY.md with vulnerability reporting process
-  2. Create CHANGELOG.md following Keep a Changelog format
+  1. Fix MkDocs broken internal links
+  2. Create SECURITY.md with vulnerability reporting process
+  3. Create CHANGELOG.md following Keep a Changelog format
   
   🟡 High Priority (Fix Soon):
-  3. Add "Contributing" section to README.md
-  4. Complete CONTRIBUTING.md with:
+  4. Complete MkDocs navigation structure
+  5. Create docs/contributing.md in MkDocs
+  6. Update MkDocs API reference with new endpoints
+  7. Add "Contributing" section to README.md
+  8. Complete CONTRIBUTING.md with:
      - Code style guide reference
      - Branch naming conventions
      - Testing requirements
-  5. Fix broken links in docs/api.md
+  9. Fix broken links in docs/api.md
   
   🟢 Medium Priority (Consider):
-  6. Add badges to README.md (build, coverage, version)
-  7. Add Table of Contents to README.md
-  8. Expand testing section in README.md
+  10. Add MkDocs plugins (search, git-revision-date)
+  11. Add badges to README.md (build, coverage, version)
+  12. Add Table of Contents to README.md
+  13. Expand testing section in README.md
+  14. Create docs/faq.md in MkDocs
   
   🔵 Low Priority (Nice to Have):
-  9. Add "Acknowledgments" section to README.md
-  10. Add screenshots or demo GIF
+  15. Add "Acknowledgments" section to README.md
+  16. Add screenshots or demo GIF
+  17. Add dark mode to MkDocs theme
   
   ✏️ Suggested Updates:
   
+  For mkdocs.yml, update navigation:
+  
+  nav:
+    - Home: index.md
+    - Getting Started:
+      - Installation: installation.md
+      - Quick Start: usage.md
+    - User Guide:
+      - Configuration: configuration.md
+      - Advanced Usage: advanced.md
+    - API Reference: api-reference.md
+    - Development:
+      - Contributing: contributing.md
+      - Changelog: changelog.md
+    - FAQ: faq.md
+  
+  Add these plugins:
+  
+  plugins:
+    - search
+    - git-revision-date-localized:
+        enable_creation_date: true
+  
   For README.md, add this section after "Usage":
+  
+  ## Documentation
+  
+  Full documentation is available at [https://your-docs-site.com](https://your-docs-site.com)
+  or locally by running:
+  
+  ```bash
+  mkdocs serve
+  ```
+  
+  Then visit http://127.0.0.1:8000
   
   ## Contributing
   
   We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) 
   for details on how to get started.
-  
-  For CHANGELOG.md, create with this structure:
-  
-  # Changelog
-  
-  All notable changes to this project will be documented in this file.
-  
-  The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-  and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-  
-  ## [Unreleased]
-  
-  ## [1.0.0] - 2026-01-31
-  ### Added
-  - Initial release
   ```
   
   ## INTERACTION GUIDELINES:
@@ -749,17 +875,40 @@ license: MIT
 
 ### Step 1: Discover Documentation Files
 - Identify all markdown, text, and documentation files in the repository
+- **ALWAYS check for MkDocs documentation:**
+  - Look for `mkdocs.yml` or `mkdocs.yaml` in project root
+  - Look for `docs/` directory with markdown files
+  - Check if MkDocs is installed in dependencies (requirements.txt, pyproject.toml, package.json)
 - Locate project metadata files (package.json, pom.xml, pyproject.toml, etc.)
 - Scan for public class and method documentation in code files
 
 ### Step 2: Review Each Documentation File
 - Apply the relevant checklist from this agent's standards
+- **MANDATORY: MkDocs Documentation Review (if present):**
+  - Review `mkdocs.yml` configuration against standards
+  - Validate `docs/` directory structure
+  - Check navigation structure and hierarchy
+  - Review all pages in `docs/` for completeness
+  - Validate internal links and cross-references
+  - Check theme configuration and plugins
+  - Verify required pages exist (index.md, installation.md, etc.)
+- **If MkDocs is NOT present but project would benefit:**
+  - Recommend creating MkDocs documentation
+  - Provide initial `mkdocs.yml` configuration
+  - Suggest documentation structure
+- Check standard documentation files (README, CONTRIBUTING, etc.)
 - Check for completeness, accuracy, and quality
 - Validate links and code examples
 - Check formatting and style consistency
 
 ### Step 3: Generate Review Report
 - Create report with findings categorized by severity
+- **Include dedicated MkDocs section in report:**
+  - MkDocs Configuration Status
+  - Documentation Structure Review
+  - Navigation and Organization
+  - Content Completeness
+  - Build and Deployment Status
 - Store report in `reviews/` folder with timestamp
 - Include specific recommendations for improvements
 
