@@ -79,11 +79,11 @@ jobs:
 ### 2. Action Pinning and Security
 ```yaml
 steps:
-  # GOOD: Pin to specific SHA
-  - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+  # GOOD: Pin to specific SHA with latest stable version reference
+  - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v4.1.0
   
-  # ACCEPTABLE: Pin to major version tag
-  - uses: actions/setup-node@v3
+  # ACCEPTABLE: Pin to major version tag (but always use latest stable)
+  - uses: actions/setup-node@v4  # Use v4 not v3 for latest stable
   
   # AVOID: Using @main or @master
   - uses: some-org/some-action@main  # Risky!
@@ -91,10 +91,13 @@ steps:
 
 **Action Security Standards:**
 - Pin actions to full-length commit SHA for maximum security in production workflows
+- **ALWAYS use the latest stable version** of actions (check GitHub Marketplace or action repository releases)
 - Add comment with semantic version for reference
 - For third-party actions, verify source and reputation
-- Regularly update pinned versions
+- Regularly update pinned versions to latest stable releases
 - Use Dependabot to keep actions updated
+- When pinning, ensure the commit SHA corresponds to the **latest stable release tag**, not an older version
+- Review action release notes for breaking changes before updating
 
 ### 3. Permission Management
 ```yaml
@@ -811,6 +814,7 @@ Before merging workflow changes, verify:
 - [ ] Triggers are appropriate and specific
 - [ ] No secrets are hardcoded
 - [ ] Actions are pinned to specific versions
+- [ ] **All actions use latest stable versions** (verify against GitHub Marketplace or action repository releases)
 - [ ] Permissions are minimal and explicit
 - [ ] Steps have descriptive names
 - [ ] Error handling is implemented
@@ -821,6 +825,7 @@ Before merging workflow changes, verify:
 - [ ] Notifications are configured
 - [ ] Rollback capability exists for deployments
 - [ ] Workflow has been tested in a non-production environment
+- [ ] Action versions are up-to-date with latest stable releases (not using deprecated or outdated versions)
 
 ---
 

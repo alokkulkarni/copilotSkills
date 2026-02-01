@@ -44,6 +44,14 @@ Before generating tests:
 - Identify edge cases and boundary conditions from requirements
 - Use requirements to inform BDD scenario creation
 
+#### 3.1 Documentation Updates (CRITICAL)
+After generating tests, you MUST update documentation:
+- Update README.md with testing instructions and coverage information
+- Document test execution commands and prerequisites
+- Update CONTRIBUTING.md with testing guidelines if applicable
+- Consider invoking `@documentagent` for comprehensive documentation updates
+- Ensure test files have clear comments explaining test strategies
+
 #### 4. Test Generation Guidelines
 
 **Context Management - CRITICAL:**
@@ -52,9 +60,9 @@ Before generating tests:
 - Re-reference instruction files when generating tests and making decisions
 
 **Use These Instruction Files (KEEP IN CONTEXT ALWAYS):**
-- `/.github/copilot/generic-testing-instructions.md` (**LOAD AND MAINTAIN IN CONTEXT**)
-- `/.github/copilot/bdd-testing-instructions.md` (**LOAD AND MAINTAIN IN CONTEXT**)
-- Language-specific review instructions for coding standards (**LOAD AND MAINTAIN IN CONTEXT**)
+- `/.github/copilot/generic-testing-instructions.md` (**LOAD AND MAINTAIN IN CONTEXT** + **CHECKLIST**: Follow ALL items)
+- `/.github/copilot/bdd-testing-instructions.md` (**LOAD AND MAINTAIN IN CONTEXT** + **CHECKLIST**: Follow ALL items)
+- Language-specific review instructions for coding standards (**LOAD AND MAINTAIN IN CONTEXT** + **CHECKLIST**: Follow ALL items for detected language)
   - `/.github/copilot/java-review-instructions.md` (for Java projects)
   - `/.github/copilot/kotlin-review-instructions.md` (for Kotlin projects)
   - `/.github/copilot/python-review-instructions.md` (for Python projects)
@@ -277,6 +285,12 @@ After test generation, produce a comprehensive report including:
 
 **Step-by-Step Process:**
 
+0. **Load Instructions into Context (ALWAYS FIRST)**
+   - Read `/.github/copilot/generic-testing-instructions.md` (Testing Standards)
+   - Read `/.github/copilot/bdd-testing-instructions.md` (BDD Standards)
+   - Detect language and read language-specific instructions
+   - **KEEP ALL THESE FILES IN CONTEXT THROUGHOUT THE ENTIRE SESSION**
+
 1. **Initialize**
    - Load all relevant instruction files into context
    - Detect programming language and frameworks
@@ -437,6 +451,29 @@ bash("run_coverage") → Generate coverage reports
 - Alignment with business requirements
 - User satisfaction with generated tests
 
+## Report Storage
+After completing test generation, store the generated report in the repository:
+
+**Location**: `./reviews/test-generation-YYYY-MM-DD-HHMMSS.md`
+
+**File Naming Convention**:
+- Format: `test-generation-YYYY-MM-DD-HHMMSS.md`
+- Example: `test-generation-2026-02-01-081404.md`
+- Use ISO 8601 date format with timestamp
+
+**Storage Process**:
+1. Generate the complete test generation report
+2. Create the `./reviews` directory if it doesn't exist
+3. Save the report with timestamp in filename
+4. Confirm report saved with full path
+
+**Report Retention**:
+- Reports serve as historical record of test coverage evolution
+- Can be referenced in future test generation sessions
+- Helps track testing improvements over time
+- Documents test strategy decisions and reasoning
+- Provides coverage baseline for future work
+
 ## Example Usage
 
 **User Request:**
@@ -450,9 +487,10 @@ bash("run_coverage") → Generate coverage reports
 5. Generate: 15 unit tests, 8 integration tests, 5 BDD scenarios
 6. Verify: All tests pass, 87% coverage
 7. Report: Comprehensive report with coverage metrics and reasoning
+8. Store: Save report in ./reviews/test-generation-2026-02-01-081404.md
 
 ---
 
 **Version**: 1.0  
-**Last Updated**: 2026-01-31  
+**Last Updated**: 2026-02-01  
 **Maintained By**: Development Team

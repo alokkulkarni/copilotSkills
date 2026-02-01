@@ -297,6 +297,65 @@ This document provides comprehensive Java-specific code review guidelines to ens
   - Stub with `when().thenReturn()`
 - **Test Naming**: Use descriptive names (`shouldReturnUserWhenUserExists`)
 
+### 7.6 Mockito Best Practices for Modern Java
+- **Interface-Based Mocking**: **ALWAYS mock interfaces, not concrete classes**
+  - Mockito with inline mocks has limitations with concrete classes that have:
+    - Constructor dependencies (especially with `@Value` or injection)
+    - Final methods or final classes
+    - Complex initialization logic
+  - **Solution**: Extract an interface from classes that will be mocked
+    ```java
+    // ❌ BAD: Mocking concrete class with constructor dependencies
+    @Mock
+    private CustomerRepository repository; // May fail with Mockito inline mocks
+    
+    // ✅ GOOD: Mock the interface instead
+    @Mock  
+    private CustomerRepositoryInterface repository; // Always works
+    ```
+
+- **Repository Pattern**: When creating repositories with constructor injection:
+  1. Create an interface defining the repository contract
+  2. Have the implementation class implement the interface
+  3. Inject and mock the interface in services and tests
+    ```java
+    // Interface for testability
+    public interface CustomerRepositoryInterface {
+        List<Customer> findAll();
+        Optional<Customer> findById(String id);
+        Customer save(Customer customer);
+        boolean deleteById(String id);
+    }
+    
+    // Implementation
+    @Repository
+    public class CustomerRepository implements CustomerRepositoryInterface {
+        // Constructor with ObjectMapper, @Value, etc.
+    }
+    
+    // Service uses interface
+    @Service
+    public class CustomerService {
+        private final CustomerRepositoryInterface repository;
+        
+        public CustomerService(CustomerRepositoryInterface repository) {
+            this.repository = repository;
+        }
+    }
+    ```
+
+- **Common Mockito Errors and Solutions**:
+  | Error | Cause | Solution |
+  |-------|-------|----------|
+  | `MockitoException: Could not modify all classes` | Mocking concrete class with constructor dependencies | Extract interface and mock that |
+  | `Mockito cannot mock this class` | Class is final or has final methods | Use interface or `mockito-inline` |
+  | `You are seeing this disclaimer because Mockito is configured to create inlined mocks` | Mockito inline limitations | Design for testability with interfaces |
+
+- **Spring Boot Testing Alternatives**:
+  - For `@WebMvcTest`: Use `@MockBean` which works with Spring context
+  - For integration tests: Use `@SpringBootTest` with `@MockBean`
+  - For pure unit tests: Use interfaces with `@Mock`
+
 ---
 
 ## 8. Performance and Optimization
@@ -507,9 +566,8 @@ This document provides comprehensive Java-specific code review guidelines to ens
 - [ ] Test coverage for business logic
 
 ### Low Priority (Nice to Have)
-- [ ] Consider Lombok for boilerplate reduction
-- [ ] Use var for obvious types (Java 10+)
-- [ ] Consider records for DTOs (Java 14+)
+- [ ] Use var for obvious types (Java 17+)
+- [ ] Consider records for DTOs (Java 17+)
 - [ ] Use text blocks for multi-line strings (Java 15+)
 - [ ] Additional Javadoc examples
 - [ ] Extract magic numbers to constants

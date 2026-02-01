@@ -187,6 +187,264 @@ This directory contains custom GitHub Copilot agents with specialized skills for
 
 ---
 
+### 🎯 Kotlin Review Agent (`kotlinreviewagent.md`)
+
+**Purpose**: Comprehensive code review agent specialized for Kotlin applications and APIs with RAG (Red-Amber-Green) categorized reporting.
+
+**What it does**:
+- ✅ Performs production-ready code reviews of Kotlin PRs
+- ✅ Validates against generic and Kotlin-specific coding standards
+- ✅ Reviews Spring Boot, Android, and multiplatform code
+- ✅ Checks coroutines, Flow, and concurrency patterns
+- ✅ Validates Java interoperability and framework integration
+- ✅ Checks test coverage (JUnit, Kotest, MockK)
+- ✅ Detects security vulnerabilities and Kotlin best practices
+- ✅ Integrates requirements from Jira/Confluence
+- ✅ Generates detailed RAG categorized reports
+- ✅ Saves reports to `<working-directory>/reviews/` folder
+
+**Usage**:
+```bash
+@kotlinreviewagent review PR #123
+@kotlinreviewagent review PR #456 with requirements from JIRA-789
+```
+
+**Reference Standards**:
+- `.github/copilot/code-review-instructions.md` (Generic)
+- `.github/copilot/kotlin-review-instructions.md` (Kotlin-specific)
+- `.github/copilot/api-review-instructions.md` (API review)
+- `.github/copilot/generic-testing-instructions.md` (Testing)
+
+---
+
+### 🐍 Python Review Agent (`pythonreviewagent.md`)
+
+**Purpose**: Comprehensive code review agent specialized for Python applications, APIs, and scripts with RAG categorized reporting.
+
+**What it does**:
+- ✅ Performs production-ready code reviews of Python PRs
+- ✅ Validates against PEP standards and Python-specific best practices
+- ✅ Reviews Flask, FastAPI, Django applications
+- ✅ Checks async/await patterns and type hints
+- ✅ Validates test coverage (pytest, unittest)
+- ✅ Detects security vulnerabilities
+- ✅ Integrates requirements from Jira/Confluence
+- ✅ Generates detailed RAG categorized reports
+- ✅ Saves reports to `<working-directory>/reviews/` folder
+
+**Usage**:
+```bash
+@pythonreviewagent review PR #123
+@pythonreviewagent review PR #456 with requirements from JIRA-789
+```
+
+**Reference Standards**:
+- `.github/copilot/code-review-instructions.md` (Generic)
+- `.github/copilot/python-review-instructions.md` (Python-specific)
+- `.github/copilot/api-review-instructions.md` (API review)
+- `.github/copilot/generic-testing-instructions.md` (Testing)
+
+---
+
+### 🧪 Test Generation Agent (`testgenerationagent.md`)
+
+**Purpose**: Intelligent test generation agent that creates unit, integration, and BDD tests based on code analysis and requirements.
+
+**What it does**:
+- ✅ Analyzes code language and generates appropriate tests
+- ✅ Creates unit tests with comprehensive coverage
+- ✅ Generates integration/functional tests
+- ✅ Writes BDD scenarios following Gherkin standards
+- ✅ Integrates requirements from Jira/Confluence
+- ✅ Provides detailed coverage reports
+- ✅ Generates test creation summary reports
+- ✅ Maintains context across multiple executions
+
+**Usage**:
+```bash
+@testgenerationagent generate tests for feature X
+@testgenerationagent create unit tests for service classes
+@testgenerationagent write BDD scenarios for JIRA-123
+```
+
+**Reference Standards**:
+- `.github/copilot/generic-testing-instructions.md`
+- `.github/copilot/bdd-testing-instructions.md`
+- Language-specific testing conventions
+
+---
+
+### ♿ Accessibility Auditor (`accessibilityauditor.md`)
+
+**Purpose**: Comprehensive accessibility auditor for mobile (iOS/Android) and web applications with RAG categorized reporting.
+
+**What it does**:
+- ✅ Audits mobile app screens (iOS and Android)
+- ✅ Audits web application accessibility
+- ✅ Validates WCAG 2.1/2.2 AA/AAA compliance
+- ✅ Checks screen readers, keyboard navigation, color contrast
+- ✅ Generates detailed RAG categorized reports
+- ✅ Saves reports to `<working-directory>/reviews/` folder
+
+**Usage**:
+```bash
+@accessibilityauditor audit iOS app screens
+@accessibilityauditor review web accessibility
+@accessibilityauditor check WCAG compliance
+```
+
+**RAG Categorization**:
+- 🔴 **RED**: Critical (WCAG A/AA violations, unusable) - **MUST FIX**
+- 🟠 **AMBER**: Important (WCAG AAA, usability issues) - **SHOULD FIX**
+- 🟢 **GREEN**: Suggestions (enhancements) - **NICE TO HAVE**
+
+---
+
+### 🔄 Workflows Review Agent (`workflowsreviewagent.md`)
+
+**Purpose**: GitHub Actions workflow review agent that validates workflows against best practices.
+
+**What it does**:
+- ✅ Reviews GitHub Actions workflow files
+- ✅ Validates workflow syntax and structure
+- ✅ Checks action versions (uses latest stable)
+- ✅ Reviews security best practices
+- ✅ Validates secrets management
+- ✅ Generates detailed RAG categorized reports
+- ✅ Saves reports to `<working-directory>/reviews/` folder
+
+**Usage**:
+```bash
+@workflowsreviewagent review workflows
+@workflowsreviewagent audit .github/workflows/
+```
+
+**Reference Standards**:
+- `.github/copilot/github-actions-instructions.md`
+
+---
+
+### ⚙️ Workflow Generator Agent (`workflowgeneratoragent.md`)
+
+**Purpose**: Intelligent GitHub Actions workflow generator that creates production-ready workflow files.
+
+**What it does**:
+- ✅ Generates GitHub Actions workflows based on project needs
+- ✅ Creates CI/CD pipelines for various languages
+- ✅ Follows think-plan-execute-reflect pattern
+- ✅ Uses latest stable action versions
+- ✅ Implements security best practices
+- ✅ Generates executable, well-documented workflows
+
+**Usage**:
+```bash
+@workflowgeneratoragent create CI workflow for Java project
+@workflowgeneratoragent generate deployment workflow
+```
+
+**Reference Standards**:
+- `.github/copilot/github-actions-instructions.md`
+
+---
+
+### 🏗️ Terraform Generator (`terraform-generator.md`)
+
+**Purpose**: Intelligent Terraform code generator for AWS, Azure, GCP, and OpenShift infrastructure.
+
+**What it does**:
+- ✅ Generates Terraform configurations (AWS, Azure, GCP, OpenShift)
+- ✅ Creates modular, parameterized infrastructure code
+- ✅ Follows think-plan-execute-reflect pattern
+- ✅ Uses latest stable provider versions
+- ✅ Implements best practices and security standards
+- ✅ Generates well-documented, executable code
+
+**Usage**:
+```bash
+@terraform-generator create AWS infrastructure for microservices
+@terraform-generator generate Azure resources
+```
+
+**Reference Standards**:
+- `.github/copilot/terraform-coding-instructions.md`
+
+---
+
+### 🔍 Terraform Reviewer (`terraform-reviewer.md`)
+
+**Purpose**: Comprehensive Terraform code review agent with RAG categorized reporting.
+
+**What it does**:
+- ✅ Reviews Terraform code against best practices
+- ✅ Validates security, cost optimization, compliance
+- ✅ Checks provider versions and module structure
+- ✅ Never generates or modifies code (review only)
+- ✅ Generates detailed RAG categorized reports
+- ✅ Saves reports to `<working-directory>/reviews/` folder
+
+**Usage**:
+```bash
+@terraform-reviewer review infrastructure code
+@terraform-reviewer audit terraform/
+```
+
+**Reference Standards**:
+- `.github/copilot/terraform-coding-instructions.md`
+
+---
+
+### ✅ Test Review Agent (`test-review-agent.md`)
+
+**Purpose**: Specialized test code review agent that validates unit, integration, and functional tests.
+
+**What it does**:
+- ✅ Reviews test code quality and coverage
+- ✅ Validates test structure and patterns
+- ✅ Analyzes code and test language compatibility
+- ✅ Checks coverage metrics (unit, integration, functional)
+- ✅ Generates detailed RAG categorized reports
+- ✅ Saves reports to `<working-directory>/reviews/` folder
+
+**Usage**:
+```bash
+@test-review-agent review test files
+@test-review-agent analyze test coverage
+```
+
+**Reference Standards**:
+- `.github/copilot/generic-testing-instructions.md`
+- `.github/copilot/bdd-testing-instructions.md`
+
+---
+
+### 👨‍💻 Java Pair Programmer (`java-pair-programmer.md`)
+
+**Purpose**: AI pair programmer specialized in Java development with think-plan-execute-reflect methodology.
+
+**What it does**:
+- ✅ Analyzes requirements from Jira/Confluence
+- ✅ Develops Java applications and APIs (Spring Boot, etc.)
+- ✅ Follows generic and Java coding standards
+- ✅ Uses latest Java versions and stable frameworks
+- ✅ Validates input, handles exceptions properly
+- ✅ Uses proper HTTP status codes for APIs
+- ✅ Never uses Lombok with Java 17+
+- ✅ Works as interactive pair programmer
+
+**Usage**:
+```bash
+@java-pair-programmer implement feature from JIRA-123
+@java-pair-programmer create REST API for user management
+@java-pair-programmer refactor service layer
+```
+
+**Reference Standards**:
+- `.github/copilot/code-review-instructions.md`
+- `.github/copilot/java-review-instructions.md`
+- `.github/copilot/api-review-instructions.md`
+
+---
+
 ## How to Use Custom Agents
 
 ### Method 1: Direct Mention

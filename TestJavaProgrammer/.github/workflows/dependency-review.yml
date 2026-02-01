@@ -1,0 +1,84 @@
+# Dependency Review Workflow
+#
+# Purpose: Reviews dependencies for security vulnerabilities on PRs
+# Trigger: On pull request to main branch
+# Prerequisites: None
+
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'TestJavaProgrammer/pom.xml'
+      - '.github/workflows/dependency-review.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Review Dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@da24556b548a50705dd671f47852072ea4c105d9 # v4.6.0
+        with:
+          fail-on-severity: high
+          deny-licenses: GPL-3.0, AGPL-3.0
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
+          comment-summary-in-pr: always
+
+      - name: Generate dependency summary
+        run: |
+          echo "## Dependency Review" >> $GITHUB_STEP_SUMMARY
+          echo "Dependencies have been reviewed for:" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔒 Security vulnerabilities (high severity)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📜 License compliance" >> $GITHUB_STEP_SUMMARY
+
+  maven-dependency-check:
+    name: Maven Dependency Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    defaults:
+      run:
+        working-directory: TestJavaProgrammer
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.6.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # Note: continue-on-error is intentional for update checks.
+      # These are informational and should not fail the PR validation.
+      - name: Check for dependency updates
+        run: |
+          mvn versions:display-dependency-updates --batch-mode -DoutputFile=dependency-updates.txt || true
+          
+          if [ -f dependency-updates.txt ]; then
+            echo "## Maven Dependency Updates Available" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat dependency-updates.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+        continue-on-error: true
+
+      # Note: continue-on-error is intentional for plugin update checks.
+      # This is advisory information and should not block the workflow.
+      - name: Check for plugin updates
+        run: |
+          mvn versions:display-plugin-updates --batch-mode || true
+        continue-on-error: true

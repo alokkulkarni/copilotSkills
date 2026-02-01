@@ -1,0 +1,84 @@
+# CodeQL Security Analysis
+#
+# Purpose: Performs security scanning using GitHub CodeQL
+# Trigger: On push to main, PRs to main, and weekly schedule
+# Prerequisites: None
+
+name: CodeQL Security Analysis
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'TestJavaProgrammer/src/**'
+      - '.github/workflows/codeql-analysis.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'TestJavaProgrammer/src/**'
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly on Monday at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: '17'
+  WORKING_DIRECTORY: TestJavaProgrammer
+
+jobs:
+  analyze:
+    name: Analyze with CodeQL
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['java']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.6.0
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@6bb031afdd8eb862ea3fc1848194185e076637e5 # v3.28.10
+        with:
+          languages: ${{ matrix.language }}
+          queries: +security-extended,security-and-quality
+
+      - name: Build project
+        run: mvn compile --batch-mode -DskipTests
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@6bb031afdd8eb862ea3fc1848194185e076637e5 # v3.28.10
+        with:
+          category: "/language:${{ matrix.language }}"
+
+      - name: Generate security summary
+        if: always()
+        run: |
+          echo "## Security Analysis Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Language**: ${{ matrix.language }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "View detailed results in the **Security** tab." >> $GITHUB_STEP_SUMMARY

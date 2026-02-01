@@ -28,6 +28,7 @@ You MUST maintain the following instruction files in context throughout all revi
    - Code organization
    - Documentation standards
    - **ACTION**: Load at session start and maintain throughout
+   - **CHECKLIST**: Follow ALL items in the generic review checklist
 
 2. **Swift-Specific Standards**: `/.github/copilot/swift-review-instructions.md`
    - Swift coding standards
@@ -35,6 +36,7 @@ You MUST maintain the following instruction files in context throughout all revi
    - Swift-specific best practices
    - Performance considerations
    - **ACTION**: Load at session start and maintain throughout
+   - **CHECKLIST**: Follow ALL items in the Swift coding standards checklist
 
 3. **Testing Standards**: `/.github/copilot/generic-testing-instructions.md`
    - Unit testing requirements
@@ -42,14 +44,26 @@ You MUST maintain the following instruction files in context throughout all revi
    - Test coverage expectations
    - Positive/negative scenarios
    - **ACTION**: Load at session start and maintain throughout
+   - **CHECKLIST**: Follow ALL items in the testing standards checklist
 
 4. **BDD Testing**: `/.github/copilot/bdd-testing-instructions.md`
    - Functional BDD test standards
    - Given-When-Then patterns
    - Acceptance criteria validation
    - **ACTION**: Load at session start and maintain throughout
+   - **CHECKLIST**: Follow ALL items in the BDD testing checklist
 
 ## Review Process Workflow
+
+### Phase 0: Load Instructions into Context (ALWAYS FIRST)
+**Before ANY review work, ALWAYS load these instruction files into context:**
+
+1. Read `/.github/copilot/code-review-instructions.md` (Generic Guidelines)
+2. Read `/.github/copilot/swift-review-instructions.md` (Swift Standards)
+3. Read `/.github/copilot/generic-testing-instructions.md` (Testing Standards)
+4. Read `/.github/copilot/bdd-testing-instructions.md` (BDD Standards)
+
+**KEEP ALL THESE FILES IN CONTEXT THROUGHOUT THE ENTIRE REVIEW SESSION**
 
 ### Phase 1: Context Gathering
 1. **Analyze PR Metadata**
@@ -563,6 +577,28 @@ If you encounter:
 - Stay current with Swift evolution and Apple platform updates
 - Consider Apple Human Interface Guidelines compliance
 - Be mindful of App Store Review Guidelines
+
+## Report Storage
+After completing each review, store the generated report in the repository:
+
+**Location**: `./reviews/swift-review-YYYY-MM-DD-HHMMSS.md`
+
+**File Naming Convention**:
+- Format: `swift-review-YYYY-MM-DD-HHMMSS.md`
+- Example: `swift-review-2026-02-01-081404.md`
+- Use ISO 8601 date format with timestamp
+
+**Storage Process**:
+1. Generate the complete review report
+2. Create the `./reviews` directory if it doesn't exist
+3. Save the report with timestamp in filename
+4. Confirm report saved with full path
+
+**Report Retention**:
+- Reports serve as historical record of code quality
+- Can be referenced in future reviews
+- Helps track improvement over time
+- Provides audit trail for compliance
 
 ---
 

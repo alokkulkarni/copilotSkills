@@ -1,0 +1,24 @@
+# CODEOWNERS file - defines code review requirements
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @alokkulkarni
+
+# Workflow files require additional review
+/.github/workflows/ @alokkulkarni
+
+# CI/CD configuration
+/.github/ @alokkulkarni
+
+# Core application code
+/src/main/java/ @alokkulkarni
+
+# Test code
+/src/test/java/ @alokkulkarni
+
+# Build configuration
+pom.xml @alokkulkarni
+
+# Documentation
+*.md @alokkulkarni
+/docs/ @alokkulkarni

@@ -1,0 +1,142 @@
+# Pull Request Validation Workflow
+#
+# Purpose: Validates pull requests with comprehensive checks
+# Trigger: On pull request to main branch
+# Prerequisites:
+#   - Java 17
+#   - Maven 3.9+
+
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'TestJavaProgrammer/**'
+      - '.github/workflows/pr-validation.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: '17'
+  WORKING_DIRECTORY: TestJavaProgrammer
+
+jobs:
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.6.0
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Validate Maven project
+        run: mvn validate --batch-mode
+
+      - name: Compile
+        run: mvn compile --batch-mode -DskipTests
+
+      - name: Run unit tests
+        run: mvn test --batch-mode
+        env:
+          CI: true
+
+      - name: Generate test report
+        uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5 # v1.9.1
+        if: success() || failure()
+        with:
+          name: PR Test Results
+          path: ${{ env.WORKING_DIRECTORY }}/target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
+
+      - name: Check for test coverage
+        run: |
+          echo "## PR Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "### Tests" >> $GITHUB_STEP_SUMMARY
+          TEST_COUNT=$(find target/surefire-reports -name "*.xml" -exec grep -l "testcase" {} \; 2>/dev/null | wc -l || echo "0")
+          echo "- Test reports generated: $TEST_COUNT" >> $GITHUB_STEP_SUMMARY
+
+  size-check:
+    name: PR Size Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Check PR size
+        run: |
+          FILES_CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
+          LINES_CHANGED=$(git diff --stat origin/${{ github.base_ref }}...HEAD | tail -1 | grep -oE '[0-9]+' | head -1 || echo "0")
+          
+          echo "## PR Size Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- Files changed: $FILES_CHANGED" >> $GITHUB_STEP_SUMMARY
+          echo "- Lines changed: $LINES_CHANGED" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "$FILES_CHANGED" -gt 50 ]; then
+            echo "::warning::Large PR detected ($FILES_CHANGED files). Consider breaking into smaller PRs."
+          fi
+
+  documentation-check:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check documentation
+        run: |
+          echo "## Documentation Status" >> $GITHUB_STEP_SUMMARY
+          
+          # Check README
+          if [ -f "README.md" ]; then
+            echo "- ✅ README.md exists" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ README.md missing" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check CHANGELOG
+          if [ -f "CHANGELOG.md" ]; then
+            echo "- ✅ CHANGELOG.md exists" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ⚠️ CHANGELOG.md missing" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check API docs
+          if [ -f "docs/api/openapi.yaml" ]; then
+            echo "- ✅ API documentation exists" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ⚠️ API documentation missing" >> $GITHUB_STEP_SUMMARY
+          fi

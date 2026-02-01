@@ -14,6 +14,8 @@ This directory contains generic code review guidelines and instructions for GitH
 ├── api-review-instructions.md       # API design and review guidelines
 ├── bdd-testing-instructions.md      # BDD functional testing guidelines
 ├── generic-testing-instructions.md  # Unit/Integration/Exploratory testing
+├── github-actions-instructions.md   # GitHub Actions workflow standards
+├── terraform-coding-instructions.md # Terraform infrastructure standards
 ├── README.md                         # This file
 ├── SUMMARY.md                        # Quick reference
 └── INDEX.md                          # Complete navigation
@@ -167,6 +169,33 @@ The `api-review-instructions.md` file provides comprehensive API guidelines cove
 - **GraphQL-Specific**: Schema design, security, query optimization
 - **gRPC-Specific**: Proto file design, streaming, best practices
 
+The `github-actions-instructions.md` file provides GitHub Actions workflow standards covering:
+
+- **Workflow Fundamentals**: YAML syntax, triggers, jobs, steps
+- **Workflow Structure**: Organization, naming, file structure
+- **Action Selection**: Using latest stable versions, trusted actions
+- **Security Best Practices**: Secrets management, permissions, hardening
+- **CI/CD Patterns**: Build, test, deploy pipelines
+- **Performance**: Caching, matrix builds, parallelization
+- **Error Handling**: Failure handling, notifications, retries
+- **Monitoring**: Logs, metrics, workflow insights
+- **Workflow Testing**: Local testing, debugging strategies
+- **Maintenance**: Version updates, deprecation handling
+
+The `terraform-coding-instructions.md` file provides Terraform standards covering:
+
+- **Terraform Fundamentals**: HCL syntax, state management, modules
+- **Project Structure**: Folder organization, module design
+- **Resource Management**: Naming, organization, dependencies
+- **Variables & Outputs**: Parameterization, type constraints, validation
+- **Provider Configuration**: Version pinning, multi-provider setup
+- **Security**: Secrets management, least privilege, encryption
+- **Best Practices**: DRY principles, modularity, documentation
+- **Multi-Cloud**: AWS, Azure, GCP, OpenShift patterns
+- **State Management**: Remote backends, locking, workspaces
+- **Testing**: terraform validate, plan, compliance testing
+- **CI/CD Integration**: Pipeline patterns, automation
+
 ## Usage
 
 ### For GitHub Copilot Agent
@@ -185,6 +214,7 @@ When performing code reviews, the agent will reference these guidelines to provi
 - Best practices reference
 - Architecture patterns
 - Unit and integration test writing
+- Infrastructure as Code standards
 
 ### For QA/Test Engineers
 - BDD test writing guidelines
@@ -195,6 +225,13 @@ When performing code reviews, the agent will reference these guidelines to provi
 - Exploratory testing approach
 - Test reporting templates
 
+### For DevOps/Platform Engineers
+- GitHub Actions workflow standards
+- Terraform infrastructure guidelines
+- CI/CD pipeline patterns
+- Security best practices
+- Multi-cloud deployment patterns
+
 ### For GitHub Copilot Agents
 - Code review automation
 - Security vulnerability detection
@@ -203,6 +240,8 @@ When performing code reviews, the agent will reference these guidelines to provi
 - Test coverage analysis
 - Duplication and hallucination prevention
 - Best practice suggestions
+- Infrastructure code generation and review
+- Workflow automation
 
 ## Customization
 
@@ -236,6 +275,12 @@ Simply reference these files when asking Copilot for help:
 
 # Example usage for BDD testing
 "Write BDD scenarios for this feature following .github/copilot/bdd-testing-instructions.md"
+
+# Example usage for Terraform
+"Generate AWS infrastructure following .github/copilot/terraform-coding-instructions.md"
+
+# Example usage for GitHub Actions
+"Create CI workflow following .github/copilot/github-actions-instructions.md"
 ```
 
 ## Feedback and Updates

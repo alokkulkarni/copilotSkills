@@ -124,6 +124,81 @@ Test: should reject login with invalid password
 - Mock random number generators for predictable tests
 - Verify interactions with mocks when relevant
 
+### 2.4.1 Mocking Best Practices (Critical)
+
+**Design for Testability**:
+- **Always mock interfaces, not concrete implementations**
+- Classes with constructor dependencies should implement interfaces
+- This ensures consistent mocking behavior across all testing frameworks
+
+**Why Mock Interfaces**:
+```
+Problem: Mocking frameworks (e.g., Mockito) struggle with:
+├─ Concrete classes with constructor parameters
+├─ Classes with @Value or @Inject annotations in constructors
+├─ Final classes or methods
+└─ Classes with complex initialization logic
+
+Solution: Extract interfaces from classes that will be mocked
+├─ Define interface with public method signatures
+├─ Have implementation class implement the interface  
+├─ Inject interface type in dependent classes
+└─ Mock the interface in unit tests
+```
+
+**Pattern for Testable Dependencies**:
+```
+// Step 1: Define Interface
+public interface RepositoryInterface {
+    List<Item> findAll();
+    Optional<Item> findById(String id);
+    Item save(Item item);
+}
+
+// Step 2: Implement Interface
+@Repository
+public class RepositoryImpl implements RepositoryInterface {
+    private final SomeDependency dependency;
+    
+    public RepositoryImpl(SomeDependency dependency) {
+        this.dependency = dependency;  // Constructor injection
+    }
+    
+    @Override
+    public List<Item> findAll() { /* implementation */ }
+}
+
+// Step 3: Use Interface in Dependent Classes
+@Service  
+public class Service {
+    private final RepositoryInterface repository;  // Interface, not concrete
+    
+    public Service(RepositoryInterface repository) {
+        this.repository = repository;
+    }
+}
+
+// Step 4: Mock Interface in Tests
+@Mock
+private RepositoryInterface repository;  // Always works!
+
+@Test
+void shouldDoSomething() {
+    when(repository.findAll()).thenReturn(List.of(item));
+    // test logic
+}
+```
+
+**Common Mocking Errors**:
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| "Cannot mock this class" | Mocking concrete class with constructor deps | Use interface |
+| "Could not modify all classes" | Inline mock limitations | Extract and mock interface |
+| Null pointer in mock setup | Class initialization side effects | Use interface |
+| Mock works sometimes | Inconsistent framework behavior | Always use interfaces |
+
+**Rule**: If a class will be mocked in tests, it MUST have an interface.
+
 ### 2.5 Positive Unit Tests
 
 **Purpose**: Verify expected behavior with valid inputs

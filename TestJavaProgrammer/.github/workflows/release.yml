@@ -1,0 +1,456 @@
+# Release Workflow
+#
+# Purpose: Creates releases with versioned artifacts, publishes to GitHub Packages and GHCR
+# Trigger: Manual dispatch with version input
+# Prerequisites:
+#   - GITHUB_TOKEN (automatic)
+#   - Environment: production (with protection rules - optional)
+#
+# Outputs: GitHub Release with JAR artifact, GitHub Packages, Docker image in GHCR
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        type: boolean
+        default: false
+      release_notes:
+        description: 'Release notes (optional)'
+        required: false
+        type: string
+      skip_docker:
+        description: 'Skip Docker image build'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  JAVA_VERSION: '17'
+  WORKING_DIRECTORY: TestJavaProgrammer
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/customer-api
+
+jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    outputs:
+      version: ${{ steps.validate.outputs.version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Validate version format
+        id: validate
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
+            echo "::error::Invalid version format. Use semantic versioning (e.g., 1.0.0 or 1.0.0-beta)"
+            exit 1
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "✅ Version $VERSION validated" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check if tag already exists
+        run: |
+          if git rev-parse "v${{ inputs.version }}" >/dev/null 2>&1; then
+            echo "::error::Tag v${{ inputs.version }} already exists. Please use a different version."
+            exit 1
+          fi
+          echo "✅ Tag v${{ inputs.version }} does not exist" >> $GITHUB_STEP_SUMMARY
+
+  build-release:
+    name: Build Release Artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: validate
+    
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+    outputs:
+      artifact-name: ${{ steps.build.outputs.artifact-name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.6.0
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Update version in pom.xml
+        run: |
+          mvn versions:set -DnewVersion=${{ needs.validate.outputs.version }} --batch-mode
+          mvn versions:commit --batch-mode
+
+      - name: Build and test
+        run: mvn clean verify --batch-mode
+        env:
+          CI: true
+
+      - name: Build release artifact
+        id: build
+        run: |
+          mvn package --batch-mode -DskipTests
+          ARTIFACT_NAME="demo-${{ needs.validate.outputs.version }}.jar"
+          
+          # Rename artifact with version
+          mv target/demo-${{ needs.validate.outputs.version }}.jar target/$ARTIFACT_NAME 2>/dev/null || \
+          mv target/*.jar target/$ARTIFACT_NAME
+          
+          echo "artifact-name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.0
+        with:
+          name: release-artifact
+          path: ${{ env.WORKING_DIRECTORY }}/target/demo-${{ needs.validate.outputs.version }}.jar
+          retention-days: 30
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate, build-release]
+    # Uncomment to require environment approval before release
+    # environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Download release artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: release-artifact
+          path: ./release
+
+      - name: Generate release notes
+        id: release-notes
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          
+          # Generate default release notes if not provided
+          if [ -z "${{ inputs.release_notes }}" ]; then
+            NOTES="## What's Changed in v$VERSION
+          
+          ### Features
+          - Customer Management REST API
+          - CRUD operations for customers
+          - Pagination support
+          - Input validation
+          - OpenAPI documentation
+          
+          ### Technical Details
+          - Java 17
+          - Spring Boot 3.2.x
+          - Maven build
+          
+          **Full Changelog**: https://github.com/${{ github.repository }}/commits/v$VERSION"
+          else
+            NOTES="${{ inputs.release_notes }}"
+          fi
+          
+          # Write to file for release action
+          echo "$NOTES" > release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
+        with:
+          tag_name: v${{ needs.validate.outputs.version }}
+          name: Release v${{ needs.validate.outputs.version }}
+          body_path: release-notes.md
+          draft: false
+          prerelease: ${{ inputs.prerelease }}
+          files: |
+            ./release/*.jar
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate release summary
+        run: |
+          echo "## 🚀 Release Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: v${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Pre-release**: ${{ inputs.prerelease }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Artifact**: ${{ needs.build-release.outputs.artifact-name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "View the release: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+
+  # Publish JAR to GitHub Packages
+  publish-packages:
+    name: Publish to GitHub Packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [validate, build-release]
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.6.0
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Download release artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: release-artifact
+          path: ${{ env.WORKING_DIRECTORY }}/target/
+
+      - name: Update version in pom.xml
+        run: |
+          mvn versions:set -DnewVersion=${{ needs.validate.outputs.version }} --batch-mode
+          mvn versions:commit --batch-mode
+
+      - name: Build and publish to GitHub Packages
+        run: mvn deploy --batch-mode -DskipTests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate publish summary
+        run: |
+          echo "## 📦 Published to GitHub Packages" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Group ID**: com.example" >> $GITHUB_STEP_SUMMARY
+          echo "- **Artifact ID**: demo" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Maven Dependency" >> $GITHUB_STEP_SUMMARY
+          echo '```xml' >> $GITHUB_STEP_SUMMARY
+          echo '<dependency>' >> $GITHUB_STEP_SUMMARY
+          echo '  <groupId>com.example</groupId>' >> $GITHUB_STEP_SUMMARY
+          echo '  <artifactId>demo</artifactId>' >> $GITHUB_STEP_SUMMARY
+          echo '  <version>${{ needs.validate.outputs.version }}</version>' >> $GITHUB_STEP_SUMMARY
+          echo '</dependency>' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  # Build and push Docker image to GHCR
+  docker-release:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [validate, build-release]
+    if: ${{ inputs.skip_docker != true }}
+    
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      security-events: write
+    
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Download release artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: release-artifact
+          path: ${{ env.WORKING_DIRECTORY }}/target/
+
+      - name: Set up QEMU for multi-architecture builds
+        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        id: docker-build
+        uses: docker/build-push-action@14487ce63c7a62a4a324b0bfb37086795e31c6c1 # v6.16.0
+        with:
+          context: ${{ env.WORKING_DIRECTORY }}
+          file: ${{ env.WORKING_DIRECTORY }}/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          labels: |
+            org.opencontainers.image.title=Customer Management API
+            org.opencontainers.image.description=Spring Boot REST API for customer management
+            org.opencontainers.image.version=${{ needs.validate.outputs.version }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            JAR_FILE=target/*.jar
+
+      - name: Generate Docker summary
+        run: |
+          echo "## 🐳 Docker Image Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Image Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Registry**: ${{ env.REGISTRY }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: ${{ env.IMAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Platforms**: linux/amd64, linux/arm64" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Tags" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Pull Command" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Run Command" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "docker run -p 8080:8080 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      # Sign Docker image with Cosign for supply chain security
+      # Note: continue-on-error is intentional for image signing.
+      # Signing failures should not block the release; the image is still usable unsigned.
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
+
+      - name: Sign the Docker image
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+          DIGEST: ${{ steps.docker-build.outputs.digest }}
+        run: |
+          cosign sign --yes ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${DIGEST}
+        continue-on-error: true
+
+      # Vulnerability scanning with Trivy
+      # Note: continue-on-error is intentional for security scanning.
+      # Scans are informational and should not block releases; results are uploaded to Security tab.
+      - name: Scan Docker image for vulnerabilities
+        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5 # v0.29.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+        continue-on-error: true
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@6bb031afdd8eb862ea3fc1848194185e076637e5 # v3.28.10
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true
+
+      # Generate SBOM (Software Bill of Materials) for supply chain security
+      # Note: continue-on-error is intentional for SBOM generation.
+      # SBOM is supplementary metadata and should not block the release pipeline.
+      - name: Generate SBOM
+        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.17.8
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}
+          artifact-name: sbom-release-${{ needs.validate.outputs.version }}.spdx.json
+          output-file: ./sbom.spdx.json
+        continue-on-error: true
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.0
+        if: always()
+        with:
+          name: sbom-release-${{ needs.validate.outputs.version }}
+          path: ./sbom.spdx.json
+          retention-days: 90
+        continue-on-error: true
+
+  # GREEN Suggestion #6: Add release notification job
+  notify-release:
+    name: Release Notification
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [validate, create-release, publish-packages, docker-release]
+    if: always()
+
+    steps:
+      - name: Generate release notification summary
+        run: |
+          echo "## 🎉 Release v${{ needs.validate.outputs.version }} Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Check job results
+          echo "### Release Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.create-release.result }}" == "success" ]; then
+            echo "- ✅ **GitHub Release**: Created successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ **GitHub Release**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.publish-packages.result }}" == "success" ]; then
+            echo "- ✅ **GitHub Packages**: JAR published" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ **GitHub Packages**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.docker-release.result }}" == "success" ]; then
+            echo "- ✅ **Docker Image**: Published to GHCR (amd64 + arm64)" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.docker-release.result }}" == "skipped" ]; then
+            echo "- ⏭️ **Docker Image**: Skipped (skip_docker=true)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ **Docker Image**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Release**: [v${{ needs.validate.outputs.version }}](https://github.com/${{ github.repository }}/releases/tag/v${{ needs.validate.outputs.version }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: \`com.example:demo:${{ needs.validate.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Docker**: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Quick Start" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "docker run -p 8080:8080 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

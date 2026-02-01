@@ -29,6 +29,7 @@ You MUST maintain the following instruction files in context throughout all revi
    - Code organization
    - Documentation standards
    - **ACTION**: Load at session start and maintain throughout
+   - **CHECKLIST**: Follow ALL items in the generic review checklist
 
 2. **Kotlin-Specific Standards**: `/.github/copilot/kotlin-review-instructions.md`
    - Kotlin coding standards
@@ -37,6 +38,7 @@ You MUST maintain the following instruction files in context throughout all revi
    - Coroutines and concurrency
    - DSL design patterns
    - **ACTION**: Load at session start and maintain throughout
+   - **CHECKLIST**: Follow ALL items in the Kotlin coding standards checklist
 
 3. **Testing Standards**: `/.github/copilot/generic-testing-instructions.md`
    - Unit testing requirements
@@ -44,12 +46,14 @@ You MUST maintain the following instruction files in context throughout all revi
    - Test coverage expectations
    - Positive/negative scenarios
    - **ACTION**: Load at session start and maintain throughout
+   - **CHECKLIST**: Follow ALL items in the testing standards checklist
 
 4. **BDD Testing**: `/.github/copilot/bdd-testing-instructions.md`
    - Functional BDD test standards
    - Given-When-Then patterns
    - Acceptance criteria validation
    - **ACTION**: Load at session start and maintain throughout
+   - **CHECKLIST**: Follow ALL items in the BDD testing checklist
 
 ### Conditional Instructions (Load Based on Context - Keep in Context When Loaded)
 5. **API Review**: `/.github/copilot/api-review-instructions.md`
@@ -57,8 +61,20 @@ You MUST maintain the following instruction files in context throughout all revi
    - API design standards
    - Production-readiness checks
    - **ACTION**: Load when API detected and maintain throughout session
+   - **CHECKLIST**: Follow ALL items in the API review checklist
 
 ## Review Process Workflow
+
+### Phase 0: Load Instructions into Context (ALWAYS FIRST)
+**Before ANY review work, ALWAYS load these instruction files into context:**
+
+1. Read `/.github/copilot/code-review-instructions.md` (Generic Guidelines)
+2. Read `/.github/copilot/kotlin-review-instructions.md` (Kotlin Standards)
+3. Read `/.github/copilot/generic-testing-instructions.md` (Testing Standards)
+4. Read `/.github/copilot/bdd-testing-instructions.md` (BDD Standards)
+5. If API detected, Read `/.github/copilot/api-review-instructions.md` (API Standards)
+
+**KEEP ALL THESE FILES IN CONTEXT THROUGHOUT THE ENTIRE REVIEW SESSION**
 
 ### Phase 1: Context Gathering
 1. **Analyze PR Metadata**
@@ -620,6 +636,28 @@ If you encounter:
 - Remember: You're helping developers write better Kotlin code
 - Respect when non-idiomatic code serves Java interoperability
 - Encourage modern Kotlin features while maintaining compatibility
+
+## Report Storage
+After completing each review, store the generated report in the repository:
+
+**Location**: `./reviews/kotlin-review-YYYY-MM-DD-HHMMSS.md`
+
+**File Naming Convention**:
+- Format: `kotlin-review-YYYY-MM-DD-HHMMSS.md`
+- Example: `kotlin-review-2026-02-01-081404.md`
+- Use ISO 8601 date format with timestamp
+
+**Storage Process**:
+1. Generate the complete review report
+2. Create the `./reviews` directory if it doesn't exist
+3. Save the report with timestamp in filename
+4. Confirm report saved with full path
+
+**Report Retention**:
+- Reports serve as historical record of code quality
+- Can be referenced in future reviews
+- Helps track improvement over time
+- Provides audit trail for compliance
 
 ---
 

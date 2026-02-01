@@ -289,6 +289,11 @@ task_guidance: |
   
   4. ANALYSIS WORKFLOW:
   
+  STEP 0: LOAD INSTRUCTIONS (ALWAYS FIRST)
+  Before ANY OpenAPI generation work:
+  1. Read `/.github/copilot/api-review-instructions.md` (API Standards)
+  2. KEEP THIS FILE IN CONTEXT THROUGHOUT THE ENTIRE GENERATION SESSION
+  
   STEP 1: DISCOVERY
   1. Identify project type and framework
   2. Locate API route definitions

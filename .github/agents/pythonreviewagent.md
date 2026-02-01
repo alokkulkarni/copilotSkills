@@ -17,17 +17,17 @@ Perform thorough code reviews of Python code changes in pull requests, ensuring 
 **CRITICAL: Keep these files ALWAYS LOADED in context across ALL reviews and executions:**
 
 Always keep the following instruction files in context across multiple reviews:
-- `/.github/copilot/code-review-instructions.md` - Generic code review guidelines (**KEEP IN CONTEXT**)
-- `/.github/copilot/python-review-instructions.md` - Python-specific coding standards (**KEEP IN CONTEXT**)
-- `/.github/copilot/api-review-instructions.md` - API review standards (when applicable) (**KEEP IN CONTEXT WHEN LOADED**)
-- `/.github/copilot/generic-testing-instructions.md` - Testing standards and guidelines (**KEEP IN CONTEXT**)
-- `/.github/copilot/bdd-testing-instructions.md` - BDD testing guidelines (when applicable) (**KEEP IN CONTEXT WHEN LOADED**)
+- `/.github/copilot/code-review-instructions.md` - Generic code review guidelines (**KEEP IN CONTEXT** + **CHECKLIST**: Follow ALL items)
+- `/.github/copilot/python-review-instructions.md` - Python-specific coding standards (**KEEP IN CONTEXT** + **CHECKLIST**: Follow ALL items)
+- `/.github/copilot/api-review-instructions.md` - API review standards (when applicable) (**KEEP IN CONTEXT WHEN LOADED** + **CHECKLIST**: Follow ALL items)
+- `/.github/copilot/generic-testing-instructions.md` - Testing standards and guidelines (**KEEP IN CONTEXT** + **CHECKLIST**: Follow ALL items)
+- `/.github/copilot/bdd-testing-instructions.md` - BDD testing guidelines (when applicable) (**KEEP IN CONTEXT WHEN LOADED** + **CHECKLIST**: Follow ALL items)
 
 **Context Management Rules:**
 - Load all relevant instruction files at the START of each review session
 - Keep instruction files CONTINUOUSLY LOADED throughout the entire session
 - Do NOT unload or drop instruction files from context during the review process
-- Re-reference these files when evaluating code and providing feedback
+- Re-reference these files AND their checklists when evaluating code and providing feedback
 - Maintain requirements context from Jira/Confluence across the entire session
 - Refresh instruction files only if explicitly updated, but always keep them loaded
 
@@ -85,6 +85,17 @@ First, analyze the codebase to determine:
 - Check for deviations from agreed designs
 
 ## Review Process
+
+### Step 0: Load Instructions into Context (ALWAYS FIRST)
+**Before ANY review work, ALWAYS load these instruction files into context:**
+
+1. Read `/.github/copilot/code-review-instructions.md` (Generic Guidelines)
+2. Read `/.github/copilot/python-review-instructions.md` (Python Standards)
+3. Read `/.github/copilot/generic-testing-instructions.md` (Testing Standards)
+4. Read `/.github/copilot/bdd-testing-instructions.md` (BDD Standards)
+5. If API/script detected, Read `/.github/copilot/api-review-instructions.md` (API Standards)
+
+**KEEP ALL THESE FILES IN CONTEXT THROUGHOUT THE ENTIRE REVIEW SESSION**
 
 ### Step 1: Context Gathering
 1. Analyze the PR description and linked issues
@@ -280,6 +291,28 @@ After each review:
 3. Update knowledge base with new Python patterns
 4. Refine categorization based on team feedback
 
+## Report Storage
+After completing each review, store the generated report in the repository:
+
+**Location**: `./reviews/python-review-YYYY-MM-DD-HHMMSS.md`
+
+**File Naming Convention**:
+- Format: `python-review-YYYY-MM-DD-HHMMSS.md`
+- Example: `python-review-2026-02-01-081404.md`
+- Use ISO 8601 date format with timestamp
+
+**Storage Process**:
+1. Generate the complete review report
+2. Create the `./reviews` directory if it doesn't exist
+3. Save the report with timestamp in filename
+4. Confirm report saved with full path
+
+**Report Retention**:
+- Reports serve as historical record of code quality
+- Can be referenced in future reviews
+- Helps track improvement over time
+- Provides audit trail for compliance
+
 ## Example Usage
 
 When invoked for a PR review:
@@ -295,3 +328,4 @@ The agent will:
 5. Apply relevant guidelines
 6. Generate comprehensive RAG report
 7. Provide actionable recommendations
+8. Store review report in ./reviews/ directory

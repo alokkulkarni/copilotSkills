@@ -136,7 +136,26 @@ This document provides language-agnostic code review guidelines to ensure code q
 - Environment-specific settings should be separate
 - Verify configuration validation on startup
 
-### 4.4 API Design
+### 4.4 Parameterization and Externalization
+- **CRITICAL**: No hardcoded values - all should be parameterized
+- Check for:
+  - Hardcoded file paths (absolute or relative)
+  - Hardcoded URLs, endpoints, or hostnames
+  - Hardcoded port numbers
+  - Hardcoded database names or connection details
+  - Hardcoded text/messages (should support i18n/localization)
+  - Hardcoded timeouts, thresholds, or limits
+  - Hardcoded feature flags or business rules
+  - Hardcoded email addresses or usernames
+- **Action**: Use configuration files, environment variables, or property files
+- Values should be:
+  - Externalized to configuration/property files
+  - Configurable per environment (dev, test, prod)
+  - Documented with default values and acceptable ranges
+  - Validated at startup or runtime
+- Magic strings and numbers should be extracted to named constants
+
+### 4.5 API Design
 - APIs should be consistent and intuitive
 - Check for proper versioning strategy
 - Verify backward compatibility considerations
@@ -328,10 +347,12 @@ This document provides language-agnostic code review guidelines to ensure code q
 
 ### Critical (Must Fix)
 - [ ] No hardcoded secrets or credentials
+- [ ] No hardcoded paths, URLs, or configuration values
 - [ ] No security vulnerabilities (injection, XSS, etc.)
 - [ ] Proper error handling in place
 - [ ] No resource leaks
 - [ ] Breaking changes are documented
+- [ ] All values properly parameterized and externalized
 
 ### High Priority (Should Fix)
 - [ ] Code duplication is minimized
