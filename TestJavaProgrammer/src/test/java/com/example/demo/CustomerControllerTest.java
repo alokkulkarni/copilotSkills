@@ -108,6 +108,26 @@ class CustomerControllerTest {
 
             verify(service).getAllCustomersPaged(1, 2);
         }
+
+        @ParameterizedTest(name = "Should handle pagination with page={0} and size={1}")
+        @MethodSource("com.example.demo.CustomerControllerTest#invalidPaginationProvider")
+        @DisplayName("Should handle edge case pagination parameters gracefully")
+        void shouldHandleEdgeCasePaginationParameters(int page, int size, String description) throws Exception {
+            // Arrange
+            PageResponse<Customer> emptyResponse = new PageResponse<>(List.of(), page, size, 0, 0);
+            when(service.getAllCustomersPaged(page, size)).thenReturn(emptyResponse);
+
+            // Act & Assert
+            mockMvc.perform(get("/api/customers")
+                            .param("page", String.valueOf(page))
+                            .param("size", String.valueOf(size)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.page").value(page))
+                    .andExpect(jsonPath("$.size").value(size));
+
+            verify(service).getAllCustomersPaged(page, size);
+        }
     }
 
     @Nested
@@ -352,7 +372,30 @@ class CustomerControllerTest {
                         "invalid email format",
                         CustomerTestBuilder.customerWithInvalidEmail(),
                         "email"
+                ),
+                Arguments.of(
+                        "null name",
+                        CustomerTestBuilder.customerWithNullName(),
+                        "name"
+                ),
+                Arguments.of(
+                        "null email",
+                        CustomerTestBuilder.customerWithNullEmail(),
+                        "email"
                 )
+        );
+    }
+
+    /**
+     * Provides edge case pagination parameters for parameterized tests.
+     *
+     * @return Stream of test arguments with page, size, and description
+     */
+    static Stream<Arguments> invalidPaginationProvider() {
+        return Stream.of(
+                Arguments.of(0, 1, "minimum valid size"),
+                Arguments.of(0, 100, "large page size"),
+                Arguments.of(999, 20, "very high page number")
         );
     }
 }

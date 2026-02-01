@@ -1,6 +1,8 @@
 package com.example.demo;
 
+import com.example.demo.model.Customer;
 import com.example.demo.model.PageResponse;
+import com.example.demo.testutil.CustomerTestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -155,6 +157,91 @@ class PageResponseTest {
             // Test single element (1 item / 10 per page = 1 page)
             PageResponse<String> singleResponse = PageResponse.of(List.of("a"), 0, 10);
             assertThat(singleResponse.totalPages()).isEqualTo(1);
+        }
+    }
+
+    @Nested
+    @DisplayName("Domain Object Tests")
+    class DomainObjectTests {
+
+        @Test
+        @DisplayName("Should paginate Customer domain objects correctly")
+        void shouldPaginateCustomerObjects() {
+            // Arrange
+            List<Customer> customers = List.of(
+                    CustomerTestBuilder.validCustomer(),
+                    CustomerTestBuilder.secondCustomer(),
+                    CustomerTestBuilder.thirdCustomer()
+            );
+
+            // Act
+            PageResponse<Customer> response = PageResponse.of(customers, 0, 2);
+
+            // Assert
+            assertThat(response.content()).hasSize(2);
+            assertThat(response.content().get(0).id()).isEqualTo("1");
+            assertThat(response.content().get(0).name()).isEqualTo("John Doe");
+            assertThat(response.content().get(1).id()).isEqualTo("2");
+            assertThat(response.content().get(1).name()).isEqualTo("Jane Doe");
+            assertThat(response.totalElements()).isEqualTo(3);
+            assertThat(response.totalPages()).isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("Should return second page of Customer objects correctly")
+        void shouldReturnSecondPageOfCustomers() {
+            // Arrange
+            List<Customer> customers = List.of(
+                    CustomerTestBuilder.validCustomer(),
+                    CustomerTestBuilder.secondCustomer(),
+                    CustomerTestBuilder.thirdCustomer()
+            );
+
+            // Act
+            PageResponse<Customer> response = PageResponse.of(customers, 1, 2);
+
+            // Assert
+            assertThat(response.content()).hasSize(1);
+            assertThat(response.content().get(0).id()).isEqualTo("3");
+            assertThat(response.content().get(0).name()).isEqualTo("Bob Smith");
+            assertThat(response.page()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("Should handle empty customer list")
+        void shouldHandleEmptyCustomerList() {
+            // Arrange
+            List<Customer> customers = List.of();
+
+            // Act
+            PageResponse<Customer> response = PageResponse.of(customers, 0, 10);
+
+            // Assert
+            assertThat(response.content()).isEmpty();
+            assertThat(response.totalElements()).isEqualTo(0);
+            assertThat(response.totalPages()).isEqualTo(0);
+        }
+
+        @Test
+        @DisplayName("Should preserve Customer record data through pagination")
+        void shouldPreserveCustomerDataThroughPagination() {
+            // Arrange
+            Customer customer = CustomerTestBuilder.customer(
+                    "test-id",
+                    "Test Customer with Special Name: åäö",
+                    "test+special@example.com"
+            );
+            List<Customer> customers = List.of(customer);
+
+            // Act
+            PageResponse<Customer> response = PageResponse.of(customers, 0, 10);
+
+            // Assert
+            assertThat(response.content()).hasSize(1);
+            Customer retrieved = response.content().get(0);
+            assertThat(retrieved.id()).isEqualTo("test-id");
+            assertThat(retrieved.name()).isEqualTo("Test Customer with Special Name: åäö");
+            assertThat(retrieved.email()).isEqualTo("test+special@example.com");
         }
     }
 }
