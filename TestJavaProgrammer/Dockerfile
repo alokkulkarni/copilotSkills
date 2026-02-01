@@ -76,11 +76,11 @@ RUN chown -R appuser:appgroup /app
 USER appuser
 
 # Expose the application port
-EXPOSE 8080
+EXPOSE 9292
 
 # Health check using wget (lighter than curl)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:9292/actuator/health || exit 1
 
 # JVM options for containerized environment
 # - UseContainerSupport: Enables container-aware memory management
