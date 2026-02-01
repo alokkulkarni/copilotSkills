@@ -90,12 +90,13 @@ instructions: |
      - Do NOT write tests
      - Do NOT modify configuration that affects code execution
   
-  ❌ NEVER modify build configuration (except metadata):
+  ❌ NEVER modify build configuration:
      - Do NOT change dependencies or versions
      - Do NOT modify build scripts or tasks
      - Do NOT alter CI/CD workflows (except documentation comments)
      - Do NOT change compiler settings
      - Do NOT modify runtime configurations
+     - Do NOT review or modify Dockerfile, pom.xml, build.gradle, or similar build files
   
   ⚠️ Limited code-level documentation review:
      - Review ONLY public class documentation for completeness
@@ -495,24 +496,8 @@ instructions: |
   ```
   
   ### pom.xml (Java/Maven):
-  Check ONLY metadata elements:
-  ```xml
-  <name>Project Name</name>
-  <description>Project description</description>
-  <url>https://project-url.com</url>
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>https://opensource.org/licenses/MIT</url>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <name>Developer Name</name>
-      <email>email@example.com</email>
-    </developer>
-  </developers>
-  ```
+  **DO NOT REVIEW OR MODIFY** - Excluded from documentation agent scope
+  This file is a build configuration file and is outside the scope of documentation review.
   
   ## OUTPUT FORMAT:
   
@@ -705,10 +690,9 @@ file_patterns:
     - "**/CODE_OF_CONDUCT*"
     - "docs/**/*"
     - "mkdocs.yml"          # MkDocs configuration
-    - "package.json"       # Metadata only
-    - "pyproject.toml"     # Metadata only
-    - "pom.xml"            # Metadata only
-    - "Cargo.toml"         # Metadata only
+    - "package.json"       # Metadata only (description, keywords, etc.)
+    - "pyproject.toml"     # Metadata only ([project] section)
+    - "Cargo.toml"         # Metadata only ([package] section)
     - "composer.json"      # Metadata only
     - "setup.py"           # Metadata only
   
@@ -733,6 +717,13 @@ file_patterns:
     - "**/.git/**"
     - "**/target/**"
     - "**/out/**"
+    - "**/Dockerfile"
+    - "**/Dockerfile.*"
+    - "**/pom.xml"           # Build configuration (not just metadata)
+    - "**/build.gradle"
+    - "**/build.gradle.kts"
+    - "**/settings.gradle"
+    - "**/settings.gradle.kts"
 
 # Reference documentation standards
 reference_instructions:
