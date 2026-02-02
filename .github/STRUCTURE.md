@@ -223,11 +223,11 @@ Each instruction file includes:
 ## Maintenance Guidelines
 
 ### Adding New Agents
-1. Create agent file in `.github/copilot/agents/`
+1. Create agent file in `.github/agents/`
 2. Add YAML frontmatter
 3. Define scope and responsibilities
 4. Reference relevant instruction files
-5. Update `.github/copilot/agents/README.md`
+5. Update `.github/agents/README.md`
 6. Update `.github/copilot-instructions.md`
 7. Update main `README.md`
 
@@ -257,7 +257,7 @@ Each instruction file includes:
 ---
 
 For detailed information on specific agents or instructions, refer to:
-- `.github/copilot/agents/README.md` - Complete agent documentation
+- `.github/agents/README.md` - Complete agent documentation
 - `.github/copilot/README.md` - Complete instructions documentation
 - `.github/copilot/INDEX.md` - Navigation index
 - `.github/copilot-instructions.md` - Custom agent registry

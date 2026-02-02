@@ -1,6 +1,6 @@
 # Copilot Custom Agents
 
-This repository contains custom GitHub Copilot agents in `.github/copilot/agents/`.
+This repository contains custom GitHub Copilot agents in `.github/agents/`.
 
 ## Available Agents
 
