@@ -28,7 +28,7 @@ resource "aws_lexv2models_intent" "this" {
     }
   }
 
-  dynamic "intent_confirmation_setting" {
+  dynamic "confirmation_setting" {
     for_each = each.value.enable_confirmation ? [1] : []
     content {
       dynamic "prompt_specification" {
@@ -68,7 +68,7 @@ resource "aws_lexv2models_intent" "this" {
     }
   }
 
-  dynamic "intent_closing_setting" {
+  dynamic "closing_setting" {
     for_each = each.value.closing_message != null ? [1] : []
     content {
       closing_response {

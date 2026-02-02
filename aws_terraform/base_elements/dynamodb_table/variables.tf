@@ -424,11 +424,9 @@ variable "backup_weekly_retention_days" {
   default     = 90
 }
 
-variable "create_manual_backup" {
-  description = "Create a manual on-demand backup"
-  type        = bool
-  default     = false
-}
+# Note: Manual backups should be created via AWS CLI or backup-table.sh script
+# Use: ./scripts/backup-table.sh <table-name> [backup-name]
+# Or: aws dynamodb create-backup --table-name TABLE_NAME --backup-name BACKUP_NAME
 
 # ------------------
 # Tags

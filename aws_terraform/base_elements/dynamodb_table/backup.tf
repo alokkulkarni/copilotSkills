@@ -111,10 +111,7 @@ resource "aws_backup_selection" "dynamodb" {
   ]
 }
 
-# On-demand backup (manual)
-resource "aws_dynamodb_table_backup" "manual" {
-  count = var.create_manual_backup ? 1 : 0
-
-  table_name = aws_dynamodb_table.this.name
-  name       = "${var.table_name}-manual-backup-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
-}
+# Note: On-demand backups should be created via AWS CLI or backup-table.sh script
+# Example: aws dynamodb create-backup --table-name TABLE_NAME --backup-name BACKUP_NAME
+# Or use: ./scripts/backup-table.sh TABLE_NAME BACKUP_NAME
+# Terraform doesn't support aws_dynamodb_table_backup resource type

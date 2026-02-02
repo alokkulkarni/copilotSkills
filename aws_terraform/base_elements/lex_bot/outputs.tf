@@ -114,7 +114,7 @@ output "bot_endpoint" {
   value = {
     bot_id      = aws_lexv2models_bot.this.id
     bot_name    = aws_lexv2models_bot.this.name
-    region      = data.aws_region.current.name
+    region      = data.aws_region.current.id
     alias_ids   = { for k, v in aws_lexv2models_bot_alias.this : k => v.bot_alias_id }
   }
 }

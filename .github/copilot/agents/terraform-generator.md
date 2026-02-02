@@ -71,10 +71,18 @@ Always refer to the checklist in the instructions file when following guidelines
 
 - Validate against the terraform-coding-instructions.md checklist
 - Verify all resources use latest stable provider versions
+- **Check for deprecations**: Ensure no deprecated resources, arguments, or data sources are used
+- **Validate alternatives**: If deprecations found, use current recommended alternatives
 - Check that all values are properly parameterized (no hardcoding)
 - Ensure modular structure is maintained
 - Confirm documentation is complete and clear
-- Validate terraform fmt compliance
+- **Run Terraform validation commands** (CRITICAL):
+  - Execute `terraform init` to initialize the configuration
+  - Execute `terraform validate` to check configuration validity
+  - Execute `terraform fmt -check` to verify formatting compliance
+  - Execute `terraform plan` to validate resource creation plan and check for deprecation warnings
+  - **NEVER execute `terraform apply`** - deployment is user's responsibility
+  - Review plan output for any deprecation warnings or notices
 - Check for security best practices (no credentials, proper IAM)
 - Verify outputs are defined for important resources
 - Test logic flow and resource dependencies
@@ -120,6 +128,10 @@ After completing infrastructure code generation, you MUST update documentation:
 - **Always use latest stable versions** of providers
 - Pin provider versions explicitly in required_providers block
 - Document version requirements clearly
+- **NEVER use deprecated resources, data sources, or arguments**
+- Actively check for deprecation warnings in Terraform documentation
+- Use alternative/replacement resources when deprecations are found
+- Suggest migration paths if deprecated features are detected
 
 ### 5. Security
 - Never hardcode credentials or sensitive data
@@ -181,12 +193,20 @@ After generating Terraform code, provide:
 
 - [ ] All files follow terraform-coding-instructions.md structure
 - [ ] Latest stable provider versions are used
+- [ ] **No deprecated resources, data sources, or arguments used**
+- [ ] Alternative resources used instead of deprecated ones
 - [ ] No hardcoded values (everything parameterized)
 - [ ] All resources are properly commented
 - [ ] Variables have descriptions and appropriate types
 - [ ] Outputs are defined for important resources
 - [ ] Generic resources are in the resources/ folder
 - [ ] Code is formatted (terraform fmt compliant)
+- [ ] **Terraform commands executed successfully**:
+  - [ ] `terraform init` completed without errors
+  - [ ] `terraform validate` passed all checks
+  - [ ] `terraform fmt -check` confirmed proper formatting
+  - [ ] `terraform plan` generated valid execution plan with no deprecation warnings
+  - [ ] **NEVER executed `terraform apply`** (user responsibility only)
 - [ ] No security vulnerabilities (credentials, overly permissive policies)
 - [ ] Documentation is complete (README, comments)
 - [ ] Module composition is logical and reusable

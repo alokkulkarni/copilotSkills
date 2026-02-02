@@ -8,34 +8,36 @@ This document provides a complete map of the repository structure and file relat
 ```
 copilotSkills/
 ├── .github/
-│   ├── agents/                           # 15 Custom Copilot Agents
-│   │   ├── README.md                     # Agent documentation hub
+│   ├── copilot-instructions.md          # Custom agent registry
+│   ├── copilot/
+│   │   ├── agents/                      # 15 Custom Copilot Agents
+│   │   │   ├── README.md                # Agent documentation hub
+│   │   │   │
+│   │   │   ├── Code Review Agents (4)
+│   │   │   ├── javareviewagent.md       # Java PR review (Spring, Jakarta EE)
+│   │   │   ├── swiftreviewagent.md      # Swift PR review (iOS, macOS, watchOS, tvOS)
+│   │   │   ├── kotlinreviewagent.md     # Kotlin PR review (Android, Spring)
+│   │   │   └── pythonreviewagent.md     # Python PR review (Flask, FastAPI, Django)
+│   │   │   │
+│   │   │   ├── Infrastructure & DevOps Agents (4)
+│   │   │   ├── terraform-generator.md   # Generate Terraform (AWS, Azure, GCP, OpenShift)
+│   │   │   ├── terraform-reviewer.md    # Review Terraform configurations
+│   │   │   ├── workflowgeneratoragent.md # Generate GitHub Actions workflows
+│   │   │   └── workflowsreviewagent.md  # Review GitHub Actions workflows
+│   │   │   │
+│   │   │   ├── Documentation & API Agents (2)
+│   │   │   ├── documentagent.md         # Review/update documentation files
+│   │   │   └── openapiagent.md          # Generate OpenAPI specifications
+│   │   │   │
+│   │   │   ├── Testing Agents (3)
+│   │   │   ├── testgenerationagent.md   # Generate unit/integration/BDD tests
+│   │   │   ├── test-review-agent.md     # Review test code quality
+│   │   │   └── accessibilityauditor.md  # Audit accessibility (mobile & web)
+│   │   │   │
+│   │   │   └── Development Agents (1)
+│   │   │       └── java-pair-programmer.md # AI pair programmer for Java
 │   │   │
-│   │   ├── Code Review Agents (4)
-│   │   ├── javareviewagent.md            # Java PR review (Spring, Jakarta EE)
-│   │   ├── swiftreviewagent.md           # Swift PR review (iOS, macOS, watchOS, tvOS)
-│   │   ├── kotlinreviewagent.md          # Kotlin PR review (Android, Spring)
-│   │   └── pythonreviewagent.md          # Python PR review (Flask, FastAPI, Django)
-│   │   │
-│   │   ├── Infrastructure & DevOps Agents (4)
-│   │   ├── terraform-generator.md        # Generate Terraform (AWS, Azure, GCP, OpenShift)
-│   │   ├── terraform-reviewer.md         # Review Terraform configurations
-│   │   ├── workflowgeneratoragent.md     # Generate GitHub Actions workflows
-│   │   └── workflowsreviewagent.md       # Review GitHub Actions workflows
-│   │   │
-│   │   ├── Documentation & API Agents (2)
-│   │   ├── documentagent.md              # Review/update documentation files
-│   │   └── openapiagent.md               # Generate OpenAPI specifications
-│   │   │
-│   │   ├── Testing Agents (3)
-│   │   ├── testgenerationagent.md        # Generate unit/integration/BDD tests
-│   │   ├── test-review-agent.md          # Review test code quality
-│   │   └── accessibilityauditor.md       # Audit accessibility (mobile & web)
-│   │   │
-│   │   └── Development Agents (1)
-│   │       └── java-pair-programmer.md   # AI pair programmer for Java
-│   │
-│   ├── copilot/                          # 10 Instruction Files
+│   │   ├── Instruction Files/           # 10 Instruction Files
 │   │   ├── README.md                     # Instructions documentation hub
 │   │   ├── INDEX.md                      # Complete navigation index
 │   │   ├── SUMMARY.md                    # Quick reference guide
@@ -221,12 +223,13 @@ Each instruction file includes:
 ## Maintenance Guidelines
 
 ### Adding New Agents
-1. Create agent file in `.github/agents/`
+1. Create agent file in `.github/copilot/agents/`
 2. Add YAML frontmatter
 3. Define scope and responsibilities
 4. Reference relevant instruction files
-5. Update `.github/agents/README.md`
-6. Update main `README.md`
+5. Update `.github/copilot/agents/README.md`
+6. Update `.github/copilot-instructions.md`
+7. Update main `README.md`
 
 ### Adding New Instructions
 1. Create instruction file in `.github/copilot/`
@@ -254,7 +257,8 @@ Each instruction file includes:
 ---
 
 For detailed information on specific agents or instructions, refer to:
-- `.github/agents/README.md` - Complete agent documentation
+- `.github/copilot/agents/README.md` - Complete agent documentation
 - `.github/copilot/README.md` - Complete instructions documentation
 - `.github/copilot/INDEX.md` - Navigation index
+- `.github/copilot-instructions.md` - Custom agent registry
 - `README.md` - Repository overview

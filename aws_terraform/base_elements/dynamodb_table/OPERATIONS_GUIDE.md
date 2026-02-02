@@ -310,16 +310,10 @@ aws backup list-backup-selections \
 **Use Case:** Backup before major update or migration
 
 ```bash
-# Method 1: Using Backup Script
+# Method 1: Using Backup Script (Recommended)
 ./scripts/backup-table.sh users-table backup-before-migration
 
-# Method 2: Using Terraform
-# Update tfvars:
-# create_manual_backup = true
-
-terraform apply -target=aws_dynamodb_table_backup.manual
-
-# Method 3: Using AWS CLI
+# Method 2: Using AWS CLI
 aws dynamodb create-backup \
   --table-name users-table \
   --backup-name manual-backup-$(date +%Y%m%d-%H%M%S)
@@ -327,6 +321,8 @@ aws dynamodb create-backup \
 # Verify backup
 aws dynamodb list-backups --table-name users-table
 ```
+
+**Note:** On-demand backups must be created via AWS CLI or the backup script. Terraform doesn't support creating DynamoDB backups as resources.
 
 ### Scenario 10: Restore from Backup
 

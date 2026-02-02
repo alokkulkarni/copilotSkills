@@ -1,5 +1,5 @@
 ---
-name: documentagent
+name: document-agent
 description: Reviews and maintains all project documentation including README, CONTRIBUTING, CODEOWNERS, LICENSE, markdown files, MkDocs documentation, and validates public class/method documentation
 tools: ["read", "search", "edit", "list"]
 ---

@@ -37,6 +37,6 @@ resource "aws_connect_bot_association" "main" {
 
   lex_bot {
     name       = each.value.name
-    lex_region = each.value.lex_region != null ? each.value.lex_region : data.aws_region.current.name
+    lex_region = each.value.lex_region != null ? each.value.lex_region : data.aws_region.current.id
   }
 }

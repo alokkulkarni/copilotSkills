@@ -20,7 +20,7 @@ resource "null_resource" "populate_data" {
     command = <<-EOT
       ${var.aws_cli_path} dynamodb batch-write-item \
         --request-items file://${local_file.initial_data[0].filename} \
-        --region ${var.aws_region != "" ? var.aws_region : data.aws_region.current.name}
+        --region ${var.aws_region != "" ? var.aws_region : data.aws_region.current.id}
     EOT
   }
 
