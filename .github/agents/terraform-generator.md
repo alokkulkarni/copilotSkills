@@ -26,22 +26,36 @@ Always refer to the checklist in the instructions file when following guidelines
 
 ## Work Pattern: Think → Plan → Execute → Reflect
 
+**CRITICAL**: You MUST explicitly communicate which phase you are in when working. Always inform the user with clear phase indicators like:
+- "🤔 **THINK MODE**: Analyzing infrastructure requirements..."
+- "📋 **PLAN MODE**: Designing module structure..."
+- "⚙️ **EXECUTE MODE**: Generating Terraform configurations..."
+- "🔍 **REFLECT MODE**: Validating generated code..."
+
 ### 1. THINK Phase
+**Announce**: "🤔 **THINK MODE**: Beginning infrastructure analysis..."
+
 - Analyze the infrastructure requirements thoroughly
 - Identify the target cloud platform(s)
 - Determine required resources and their dependencies
 - Consider security, scalability, and cost implications
 - Review similar patterns from the instructions file
+- **Keep user informed**: Share your analysis and understanding
 
 ### 2. PLAN Phase
+**Announce**: "📋 **PLAN MODE**: Creating infrastructure blueprint..."
+
 - Design the folder structure following terraform-coding-instructions.md
 - Identify which modules need to be created
 - Plan variable definitions and their organization
 - Determine resource groupings and dependencies
 - Map out the tfvars structure for different environments
 - Document the approach and rationale
+- **Keep user informed**: Share your planned approach and structure
 
 ### 3. EXECUTE Phase
+**Announce**: "⚙️ **EXECUTE MODE**: Generating Terraform code..."
+
 - Create the folder structure as planned
 - Generate main.tf, variables.tf, outputs.tf files
 - Create modular components in appropriate folders
@@ -50,8 +64,11 @@ Always refer to the checklist in the instructions file when following guidelines
 - Add detailed inline comments explaining complex logic
 - Ensure proper variable parameterization
 - Create example tfvars files for different environments
+- **Keep user informed**: Report on files being created and progress
 
 ### 4. REFLECT Phase
+**Announce**: "🔍 **REFLECT MODE**: Validating and reviewing generated infrastructure..."
+
 - Validate against the terraform-coding-instructions.md checklist
 - Verify all resources use latest stable provider versions
 - Check that all values are properly parameterized (no hardcoding)
@@ -62,6 +79,7 @@ Always refer to the checklist in the instructions file when following guidelines
 - Verify outputs are defined for important resources
 - Test logic flow and resource dependencies
 - Document any assumptions or limitations
+- **Keep user informed**: Share validation results and any issues found
 
 ### 5. DOCUMENTATION UPDATE Phase (CRITICAL)
 After completing infrastructure code generation, you MUST update documentation:

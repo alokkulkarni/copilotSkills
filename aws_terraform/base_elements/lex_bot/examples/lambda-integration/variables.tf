@@ -1,5 +1,5 @@
 variable "aws_region" {
-  description = "AWS region for resources"
+  description = "AWS region for deployment"
   type        = string
   default     = "eu-west-2"
 }
@@ -15,8 +15,14 @@ variable "environment" {
   }
 }
 
+variable "bot_name" {
+  description = "Name of the Lex bot"
+  type        = string
+  default     = "HotelBookingBot"
+}
+
 variable "log_retention_days" {
-  description = "Number of days to retain CloudWatch logs"
+  description = "CloudWatch log retention in days"
   type        = number
-  default     = 7
+  default     = 14
 }

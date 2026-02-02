@@ -1,0 +1,84 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "greet-customer",
+  "Metadata": {
+    "entryPointPosition": {"x": 20, "y": 20},
+    "snapToGrid": false,
+    "ActionMetadata": {
+      "greet-customer": {"position": {"x": 200, "y": 50}},
+      "check-hours": {"position": {"x": 400, "y": 50}},
+      "transfer-to-queue": {"position": {"x": 600, "y": 50}},
+      "after-hours": {"position": {"x": 600, "y": 200}},
+      "disconnect": {"position": {"x": 800, "y": 50}}
+    }
+  },
+  "Actions": [
+    {
+      "Identifier": "greet-customer",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "Thank you for calling. Please hold while we connect you to an agent."
+      },
+      "Transitions": {
+        "NextAction": "check-hours",
+        "Errors": [],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "check-hours",
+      "Type": "CheckHoursOfOperation",
+      "Parameters": {
+        "HoursOfOperationId": "$.Attributes.HoursOfOperationId"
+      },
+      "Transitions": {
+        "NextAction": "after-hours",
+        "Errors": [],
+        "Conditions": [
+          {
+            "NextAction": "transfer-to-queue",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": ["InHours"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Identifier": "transfer-to-queue",
+      "Type": "TransferToQueue",
+      "Parameters": {
+        "QueueId": "$.Attributes.QueueId"
+      },
+      "Transitions": {
+        "NextAction": "disconnect",
+        "Errors": [
+          {
+            "NextAction": "disconnect",
+            "ErrorType": "QueueAtCapacity"
+          }
+        ],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "after-hours",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "Thank you for calling. Our office is currently closed. Please call back during business hours, Monday to Friday, 9 AM to 5 PM."
+      },
+      "Transitions": {
+        "NextAction": "disconnect",
+        "Errors": [],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "disconnect",
+      "Type": "DisconnectParticipant",
+      "Parameters": {},
+      "Transitions": {}
+    }
+  ]
+}

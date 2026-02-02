@@ -1,0 +1,150 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "greet-customer",
+  "Metadata": {
+    "entryPointPosition": {"x": 20, "y": 20},
+    "snapToGrid": false,
+    "ActionMetadata": {
+      "greet-customer": {"position": {"x": 200, "y": 50}},
+      "get-customer-input": {"position": {"x": 400, "y": 50}},
+      "invoke-lambda": {"position": {"x": 600, "y": 50}},
+      "check-result": {"position": {"x": 800, "y": 50}},
+      "transfer-to-queue": {"position": {"x": 1000, "y": 50}},
+      "error-flow": {"position": {"x": 800, "y": 200}},
+      "disconnect": {"position": {"x": 1200, "y": 50}}
+    }
+  },
+  "Actions": [
+    {
+      "Identifier": "greet-customer",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "Hello! I'm your virtual assistant. I can help you with your inquiry."
+      },
+      "Transitions": {
+        "NextAction": "get-customer-input",
+        "Errors": [],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "get-customer-input",
+      "Type": "ConnectParticipantWithLexBot",
+      "Parameters": {
+        "LexBot": {
+          "Name": "$.Attributes.LexBotName",
+          "Region": "$.Attributes.LexBotRegion",
+          "Alias": "$.Attributes.LexBotAlias"
+        },
+        "Text": "How can I help you today?"
+      },
+      "Transitions": {
+        "NextAction": "invoke-lambda",
+        "Errors": [
+          {
+            "NextAction": "error-flow",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "invoke-lambda",
+      "Type": "InvokeLambdaFunction",
+      "Parameters": {
+        "LambdaFunctionARN": "$.Attributes.LambdaFunctionARN",
+        "InvocationTimeLimitSeconds": "8",
+        "LambdaInvocationAttributes": {
+          "CustomerInput": "$.Lex.SessionAttributes.customerInput",
+          "Intent": "$.Lex.IntentName"
+        }
+      },
+      "Transitions": {
+        "NextAction": "check-result",
+        "Errors": [
+          {
+            "NextAction": "error-flow",
+            "ErrorType": "CallFailure"
+          }
+        ],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "check-result",
+      "Type": "CheckAttribute",
+      "Parameters": {
+        "Attribute": "$.External.requiresAgent",
+        "ComparisonValue": "true"
+      },
+      "Transitions": {
+        "NextAction": "error-flow",
+        "Errors": [],
+        "Conditions": [
+          {
+            "NextAction": "transfer-to-queue",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": ["true"]
+            }
+          },
+          {
+            "NextAction": "disconnect",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": ["false"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Identifier": "transfer-to-queue",
+      "Type": "TransferToQueue",
+      "Parameters": {
+        "QueueId": "$.Attributes.QueueId"
+      },
+      "Transitions": {
+        "NextAction": "disconnect",
+        "Errors": [
+          {
+            "NextAction": "error-flow",
+            "ErrorType": "QueueAtCapacity"
+          }
+        ],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "error-flow",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "I apologize, but I'm having trouble processing your request. Let me transfer you to an agent who can help."
+      },
+      "Transitions": {
+        "NextAction": "transfer-to-queue",
+        "Errors": [],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "disconnect",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "Thank you for contacting us. Have a great day!"
+      },
+      "Transitions": {
+        "NextAction": "end-flow",
+        "Errors": [],
+        "Conditions": []
+      }
+    },
+    {
+      "Identifier": "end-flow",
+      "Type": "DisconnectParticipant",
+      "Parameters": {},
+      "Transitions": {}
+    }
+  ]
+}

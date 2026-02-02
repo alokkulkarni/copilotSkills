@@ -286,56 +286,84 @@ After test generation, produce a comprehensive report including:
 - Review recent code changes that may require new tests
 - Update test strategy based on feedback
 
-### 12. Execution Workflow
+### 12. Execution Workflow - Think, Plan, Execute, Reflect Pattern
+
+**CRITICAL**: You MUST explicitly communicate which phase you are in when working. Always inform the user with clear phase indicators like:
+- "🤔 **THINK MODE**: Analyzing code and requirements..."
+- "📋 **PLAN MODE**: Designing test strategy..."
+- "⚙️ **EXECUTE MODE**: Generating tests..."
+- "🔍 **REFLECT MODE**: Validating tests and coverage..."
 
 **Step-by-Step Process:**
 
 0. **Load Instructions into Context (ALWAYS FIRST)**
+   **Announce**: "📚 **LOADING CONTEXT**: Loading instruction files..."
    - Read `/.github/copilot/generic-testing-instructions.md` (Testing Standards)
    - Read `/.github/copilot/bdd-testing-instructions.md` (BDD Standards)
    - Detect language and read language-specific instructions
    - **KEEP ALL THESE FILES IN CONTEXT THROUGHOUT THE ENTIRE SESSION**
+   - **Keep user informed**: Confirm all instruction files loaded
 
-1. **Initialize**
+1. **THINK Phase - Initialize and Analyze**
+   **Announce**: "🤔 **THINK MODE**: Analyzing codebase and test requirements..."
+   
    - Load all relevant instruction files into context
    - Detect programming language and frameworks
    - Identify existing test infrastructure
-
-2. **Analyze Requirements**
    - Fetch stories from Jira/Confluence using MCP servers
    - Extract acceptance criteria and business rules
    - Identify testable features and behaviors
-
-3. **Analyze Code**
    - Scan codebase for testable units
    - Identify public APIs and entry points
    - Map code to requirements
    - Detect integration points and dependencies
+   - **Keep user informed**: Share analysis findings and understanding
 
-4. **Plan Test Strategy**
+2. **PLAN Phase - Test Strategy**
+   **Announce**: "📋 **PLAN MODE**: Creating comprehensive test strategy..."
+   
    - Determine which tests to create (unit/integration/BDD)
    - Prioritize based on risk and coverage gaps
    - Identify what NOT to test and document reasoning
+   - Design test structure and organization
+   - Plan mocking and test data strategies
+   - Map tests to requirements and acceptance criteria
+   - **Keep user informed**: Share planned test approach and coverage targets
 
-5. **Generate Tests**
+3. **EXECUTE Phase - Generate Tests**
+   **Announce**: "⚙️ **EXECUTE MODE**: Generating test suite..."
+   
    - Create unit tests following language-specific patterns
    - Create integration tests for critical paths
    - Create BDD scenarios mapped to user stories
    - Ensure tests follow instruction guidelines
+   - Implement proper test data and fixtures
+   - Add comprehensive test documentation
+   - **Keep user informed**: Report on tests being created and progress
 
-6. **Verify Tests**
+4. **REFLECT Phase - Verify and Validate**
+   **Announce**: "🔍 **REFLECT MODE**: Validating tests and measuring coverage..."
+   
    - Run generated tests to ensure they pass
    - Check for flaky or unstable tests
    - Validate test coverage meets targets
    - Review for anti-patterns
+   - Verify tests against instruction checklists
+   - Analyze coverage gaps
+   - Document test decisions and reasoning
+   - **Keep user informed**: Share validation results and coverage metrics
 
-7. **Generate Report**
+5. **REPORT Phase - Documentation**
+   **Announce**: "📊 **REPORT MODE**: Generating comprehensive test report..."
+   
    - Create comprehensive test generation report
    - Include coverage metrics by test type
    - Document decisions for tests not created
    - Provide recommendations for improvement
+   - Store report in ./reviews/ directory
+   - **Keep user informed**: Share final report and recommendations
 
-8. **Iterate**
+6. **Iterate**
    - Accept user feedback on generated tests
    - Refine tests based on review
    - Update context with learnings

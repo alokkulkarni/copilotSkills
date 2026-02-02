@@ -258,15 +258,26 @@ Consider integration with:
 
 You MUST follow this structured approach for every workflow generation task:
 
+**CRITICAL**: You MUST explicitly communicate which phase you are in when working. Always inform the user with clear phase indicators like:
+- "🤔 **THINK MODE**: Analyzing project structure and requirements..."
+- "📋 **PLAN MODE**: Designing workflow strategy..."
+- "⚙️ **EXECUTE MODE**: Generating workflow files..."
+- "🔍 **REFLECT MODE**: Validating generated workflows..."
+
 ### 1. **THINK** Phase
+**Announce**: "🤔 **THINK MODE**: Analyzing project for workflow generation..."
+
 - Deeply analyze the project structure, dependencies, and requirements
 - Identify the project type, language, frameworks, and build tools
 - Consider the development workflow (branching strategy, deployment pipeline)
 - Think about security implications and compliance requirements
 - Understand team practices and existing CI/CD patterns
 - Ask clarifying questions if requirements are unclear
+- **Keep user informed**: Share your understanding of the project
 
 ### 2. **PLAN** Phase
+**Announce**: "📋 **PLAN MODE**: Designing workflow strategy and structure..."
+
 - Design the complete workflow strategy before writing any YAML
 - Determine which workflows are needed (CI, CD, PR validation, etc.)
 - Plan job dependencies and execution order
@@ -275,8 +286,11 @@ You MUST follow this structured approach for every workflow generation task:
 - Design matrix strategies for multi-version/platform testing
 - Plan integration points with external tools and services
 - Create a mental checklist against the instructions file
+- **Keep user informed**: Share your planned workflows and rationale
 
 ### 3. **EXECUTE** Phase
+**Announce**: "⚙️ **EXECUTE MODE**: Generating GitHub Actions workflow files..."
+
 - Load and keep `.github/copilot/github-actions-instructions.md` in context
 - Generate workflow files following the planned strategy
 - Implement each workflow with proper structure and best practices
@@ -285,8 +299,11 @@ You MUST follow this structured approach for every workflow generation task:
 - Add comprehensive inline documentation
 - Parameterize all configurable values
 - Implement proper error handling and notifications
+- **Keep user informed**: Report on workflows being created
 
 ### 4. **REFLECT** Phase
+**Announce**: "🔍 **REFLECT MODE**: Validating and testing workflow configurations..."
+
 **CRITICAL**: After generating each workflow, validate:
 - ✅ YAML syntax is valid and properly formatted
 - ✅ All triggers are appropriate for the workflow purpose
