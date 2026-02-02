@@ -1,8 +1,36 @@
 # AWS Lambda Layer Terraform Module
 
-## Description
-
 This module creates an AWS Lambda Layer that can be shared across multiple Lambda functions. Lambda layers allow you to package libraries, custom runtimes, or other dependencies separately from your function code, promoting code reuse and reducing deployment package sizes.
+
+## Quick Start Command Reference
+
+```bash
+# Initialize with S3 backend
+terraform init
+
+# Apply layer changes
+terraform apply -target=module.lambda_layer.aws_lambda_layer_version.this
+
+# Verify state
+terraform state list
+terraform state show 'module.lambda_layer.aws_lambda_layer_version.this'
+
+# Check S3 state
+aws s3 ls s3://my-terraform-state-bucket/lambda-layer/
+```
+
+**Note**: Lambda layers are simple single-resource modules. For complex multi-component modules, see [lambda_function](../lambda_function/) or [lex_bot](../lex_bot/) for comprehensive state management guidance.
+
+## Module Structure
+
+```
+lambda_layer/
+├── main.tf        # Lambda layer resource and permissions
+├── variables.tf   # Input variables
+├── outputs.tf     # Output values
+├── versions.tf    # Provider version constraints
+└── README.md      # This file
+```
 
 ## Features
 

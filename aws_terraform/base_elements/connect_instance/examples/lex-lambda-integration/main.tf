@@ -25,6 +25,14 @@ provider "aws" {
 # ============================================
 # Connect Instance with Lex and Lambda Integration
 # ============================================
+# This example focuses on AI integrations using the modular Connect module.
+# Key module files for this example:
+# - integrations.tf: Lambda & Lex bot associations (PRIMARY FOCUS)
+# - contact_flows.tf: AI-powered call routing logic
+# - queues.tf: AI escalation queues
+# - users.tf: Agents handling AI escalations
+# The integrations.tf file handles both Lambda and Lex associations
+# with automatic permission management.
 
 module "connect" {
   source = "../../"

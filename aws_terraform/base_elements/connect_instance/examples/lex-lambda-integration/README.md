@@ -2,6 +2,39 @@
 
 This example demonstrates a complete Amazon Connect contact center with integrated Amazon Lex bot and AWS Lambda functions for intelligent call routing and customer service automation.
 
+## Module Structure
+
+This example uses the modular Connect instance module with special focus on AI integrations:
+
+| Component | Module File | Purpose |
+|-----------|-------------|----------|
+| Instance | main.tf | Core Connect configuration |
+| Integrations | integrations.tf | **Lambda & Lex bot associations** |
+| Contact Flows | contact_flows.tf | AI-powered call routing |
+| Queues | queues.tf | AI escalation queues |
+| Users | users.tf | Agents handling escalations |
+
+### AI Integration Management
+
+The **integrations.tf** file manages:
+- Lambda function associations with automatic invoke permissions
+- Lex bot associations with regional configuration
+- Both can be independently added/removed via variables
+
+```hcl
+# Add more Lambda functions
+lambda_functions = {
+  customer_lookup = { function_arn = "..." }
+  payment_processing = { function_arn = "..." }
+}
+
+# Add more Lex bots
+lex_bots = [
+  { name = "CustomerServiceBot", lex_region = "eu-west-2" }
+  { name = "BillingBot", lex_region = "eu-west-2" }
+]
+```
+
 ## Architecture
 
 ```

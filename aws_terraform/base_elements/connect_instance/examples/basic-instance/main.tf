@@ -25,6 +25,14 @@ provider "aws" {
 # ============================================
 # Basic Connect Instance
 # ============================================
+# This example uses the modular Connect instance module.
+# Resources are organized in separate files:
+# - hours_of_operation.tf: Business hours
+# - queues.tf: Queue configuration
+# - routing_profiles.tf: Agent routing
+# - security_profiles.tf: Access control
+# - users.tf: User management
+# All components are configured via variables below.
 
 module "connect" {
   source = "../../"

@@ -2,6 +2,73 @@
 
 Production-ready Terraform module for deploying AWS Lex V2 conversational bots with complete configuration management.
 
+## Quick Start Command Reference
+
+### Most Common Operations
+
+```bash
+# Initialize with S3 backend
+terraform init
+
+# Plan/Apply specific components
+terraform apply -target=module.lex_bot.aws_lexv2models_bot.this                    # Bot only
+terraform apply -target=module.lex_bot.aws_lexv2models_intent.this                 # Intents only
+terraform apply -target=module.lex_bot.aws_lexv2models_slot.this                   # Slots only
+terraform apply -target=module.lex_bot.aws_lexv2models_bot_alias.this              # Aliases only
+
+# Verify state
+terraform state list                                                              # List all resources
+terraform state show 'module.lex_bot.aws_lexv2models_bot.this'                    # Show bot details
+
+# Check S3 state
+aws s3 ls s3://my-terraform-state-bucket/lex-bot/                                 # List state files
+```
+
+**📘 For detailed command reference, see [Terraform Commands and State Management](#terraform-commands-and-state-management) section below.**  
+**📕 For step-by-step operational procedures, see [OPERATIONS_GUIDE.md](OPERATIONS_GUIDE.md).**  
+**📗 For complete S3 state management guide, see [STATE_MANAGEMENT.md](STATE_MANAGEMENT.md).**
+
+## Table of Contents
+
+- [Module Structure](#module-structure)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- **[📘 Terraform Commands and State Management](#terraform-commands-and-state-management)** ⭐
+- **[📋 Module-Level vs Component-Level Operations](#module-level-vs-component-level-operations)** ⭐
+- [Usage](#usage)
+- [Examples](#examples)
+- [Best Practices](#best-practices)
+
+### 📚 Additional Documentation
+
+- **[OPERATIONS_GUIDE.md](OPERATIONS_GUIDE.md)** - Step-by-step procedures for common operational tasks
+- **[STATE_MANAGEMENT.md](STATE_MANAGEMENT.md)** - Complete guide for S3 state backend setup and management
+
+## Module Structure
+
+The module is organized into separate, focused files for better maintainability:
+
+```
+lex_bot/
+├── main.tf                    # Core bot and locale resources
+├── iam.tf                     # IAM roles and policies
+├── intents.tf                 # Intent definitions and configurations
+├── slots.tf                   # Slot and slot type definitions
+├── versions_and_aliases.tf    # Bot versions and aliases
+├── variables.tf               # Input variables
+├── outputs.tf                 # Output values
+├── versions.tf                # Provider version constraints
+└── README.md                  # This file
+```
+
+### Benefits of Modular Structure
+
+- **Focused Changes**: Update intents without touching slots or aliases
+- **Clear Separation**: Each file has a single, well-defined responsibility
+- **Easy Navigation**: Quickly locate resources by category
+- **Independent Testing**: Test specific components in isolation
+- **Team Collaboration**: Multiple team members can work on different components
+
 ## Features
 
 - ✅ **Complete Lex V2 Bot Management** - Full bot lifecycle from creation to deployment
@@ -349,6 +416,126 @@ When deploying to multiple regions:
 - Use S3 audio logs for voice interactions
 - Enable sentiment analysis for user insights
 - Set appropriate log retention periods
+
+## Terraform Commands and State Management
+
+### Backend Configuration for S3 State
+
+Configure S3 backend in your root module:
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state-bucket"
+    key            = "lex-bot/terraform.tfstate"
+    region         = "eu-west-2"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
+  }
+}
+```
+
+### Targeted Terraform Operations
+
+#### Update Bot Configuration Only
+
+```bash
+terraform apply -target=module.lex_bot.aws_lexv2models_bot.this
+terraform apply -target=module.lex_bot.aws_lexv2models_bot_locale.this
+```
+
+#### Update Intents Only
+
+```bash
+# All intents
+terraform apply -target=module.lex_bot.aws_lexv2models_intent.this
+
+# Specific intent
+terraform apply -target='module.lex_bot.aws_lexv2models_intent.this["BookRoom"]'
+```
+
+#### Update Slots Only
+
+```bash
+# All slots
+terraform apply -target=module.lex_bot.aws_lexv2models_slot.this
+
+# Custom slot types
+terraform apply -target=module.lex_bot.aws_lexv2models_slot_type.this
+```
+
+#### Update Versions and Aliases Only
+
+```bash
+# Create new version
+terraform apply -target=module.lex_bot.aws_lexv2models_bot_version.this
+
+# Update aliases
+terraform apply -target=module.lex_bot.aws_lexv2models_bot_alias.this
+```
+
+#### Update IAM Role Only
+
+```bash
+terraform apply -target=module.lex_bot.aws_iam_role.lex_bot
+terraform apply -target=module.lex_bot.aws_iam_role_policy.lex_bot_basic
+```
+
+### State Verification
+
+```bash
+# List all resources
+terraform state list
+
+# Show bot details
+terraform state show 'module.lex_bot.aws_lexv2models_bot.this'
+
+# Show specific intent
+terraform state show 'module.lex_bot.aws_lexv2models_intent.this["Greeting"]'
+
+# Check S3 state
+aws s3 ls s3://my-terraform-state-bucket/lex-bot/terraform.tfstate
+```
+
+## Module-Level vs Component-Level Operations
+
+### Component Mapping
+
+| Component | File | Resource Type | Target Flag Example |
+|-----------|------|---------------|---------------------|
+| **Bot** | main.tf | `aws_lexv2models_bot` | `-target=module.lex_bot.aws_lexv2models_bot.this` |
+| **Bot Locale** | main.tf | `aws_lexv2models_bot_locale` | `-target=module.lex_bot.aws_lexv2models_bot_locale.this` |
+| **Intents** | intents.tf | `aws_lexv2models_intent` | `-target=module.lex_bot.aws_lexv2models_intent.this` |
+| **Slots** | slots.tf | `aws_lexv2models_slot` | `-target=module.lex_bot.aws_lexv2models_slot.this` |
+| **Slot Types** | slots.tf | `aws_lexv2models_slot_type` | `-target=module.lex_bot.aws_lexv2models_slot_type.this` |
+| **Bot Version** | versions_and_aliases.tf | `aws_lexv2models_bot_version` | `-target=module.lex_bot.aws_lexv2models_bot_version.this` |
+| **Bot Alias** | versions_and_aliases.tf | `aws_lexv2models_bot_alias` | `-target=module.lex_bot.aws_lexv2models_bot_alias.this` |
+| **IAM Role** | iam.tf | `aws_iam_role` | `-target=module.lex_bot.aws_iam_role.lex_bot` |
+
+### Example: Add New Intent Without Affecting Others
+
+```bash
+# 1. Add intent to terraform.tfvars
+cat >> terraform.tfvars <<'EOF'
+intents = {
+  # ... existing intents ...
+  "CancelBooking" = {
+    locale_id = "en_GB"
+    sample_utterances = ["cancel my booking", "I want to cancel"]
+    closing_message = "Your booking has been cancelled."
+  }
+}
+EOF
+
+# 2. Plan intent changes
+terraform plan -target=module.lex_bot.aws_lexv2models_intent.this
+
+# 3. Apply only intent changes
+terraform apply -target=module.lex_bot.aws_lexv2models_intent.this
+
+# 4. Verify
+terraform state list | grep intent
+```
 
 ## Examples
 

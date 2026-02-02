@@ -1,0 +1,47 @@
+[
+  {
+    "userId": {"S": "user-001"},
+    "name": {"S": "Alice Johnson"},
+    "email": {"S": "alice.johnson@example.com"},
+    "role": {"S": "admin"},
+    "createdAt": {"N": "1704067200"},
+    "lastLogin": {"N": "1706745600"},
+    "active": {"BOOL": true}
+  },
+  {
+    "userId": {"S": "user-002"},
+    "name": {"S": "Bob Smith"},
+    "email": {"S": "bob.smith@example.com"},
+    "role": {"S": "user"},
+    "createdAt": {"N": "1704153600"},
+    "lastLogin": {"N": "1706659200"},
+    "active": {"BOOL": true}
+  },
+  {
+    "userId": {"S": "user-003"},
+    "name": {"S": "Carol Williams"},
+    "email": {"S": "carol.williams@example.com"},
+    "role": {"S": "user"},
+    "createdAt": {"N": "1704240000"},
+    "lastLogin": {"N": "1706572800"},
+    "active": {"BOOL": true}
+  },
+  {
+    "userId": {"S": "user-004"},
+    "name": {"S": "David Brown"},
+    "email": {"S": "david.brown@example.com"},
+    "role": {"S": "moderator"},
+    "createdAt": {"N": "1704326400"},
+    "lastLogin": {"N": "1706486400"},
+    "active": {"BOOL": false}
+  },
+  {
+    "userId": {"S": "user-005"},
+    "name": {"S": "Eve Martinez"},
+    "email": {"S": "eve.martinez@example.com"},
+    "role": {"S": "user"},
+    "createdAt": {"N": "1704412800"},
+    "lastLogin": {"N": "1706400000"},
+    "active": {"BOOL": true}
+  }
+]

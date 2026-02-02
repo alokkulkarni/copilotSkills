@@ -2,6 +2,30 @@
 
 This example demonstrates deploying a complete Amazon Connect contact center with all features including phone numbers, contact flows, multiple queues, and user management.
 
+## Module Structure
+
+This example leverages the modular Connect instance module where each component is managed in separate files:
+
+| Component | Module File | Example Configuration |
+|-----------|-------------|----------------------|
+| Instance | main.tf | Core Connect settings |
+| Hours of Operation | hours_of_operation.tf | Business & extended hours |
+| Phone Numbers | phone_numbers.tf | DID & toll-free lines |
+| Queues | queues.tf | Sales & Support queues |
+| Routing Profiles | routing_profiles.tf | Agent & Supervisor profiles |
+| Security Profiles | security_profiles.tf | Role-based permissions |
+| Quick Connects | quick_connects.tf | Supervisor transfers |
+| Contact Flows | contact_flows.tf | Call routing logic |
+| Users | users.tf | Agents & supervisors |
+
+### Component Management
+
+You can independently manage each component by updating the corresponding variables. For example:
+- **Add phone numbers**: Modify `phone_numbers` variable
+- **Add users**: Modify `users` variable
+- **Add security profiles**: Modify `security_profiles` variable
+- **Update contact flows**: Modify `contact_flows` variable
+
 ## Features
 
 - Complete Connect instance with all features enabled

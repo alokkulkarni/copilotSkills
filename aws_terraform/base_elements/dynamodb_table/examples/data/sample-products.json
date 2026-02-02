@@ -1,0 +1,42 @@
+[
+  {
+    "productId": {"S": "prod-001"},
+    "name": {"S": "Wireless Mouse"},
+    "category": {"S": "Electronics"},
+    "price": {"N": "29.99"},
+    "stock": {"N": "150"},
+    "createdAt": {"N": "1704067200"}
+  },
+  {
+    "productId": {"S": "prod-002"},
+    "name": {"S": "Mechanical Keyboard"},
+    "category": {"S": "Electronics"},
+    "price": {"N": "89.99"},
+    "stock": {"N": "75"},
+    "createdAt": {"N": "1704153600"}
+  },
+  {
+    "productId": {"S": "prod-003"},
+    "name": {"S": "USB-C Cable"},
+    "category": {"S": "Accessories"},
+    "price": {"N": "12.99"},
+    "stock": {"N": "500"},
+    "createdAt": {"N": "1704240000"}
+  },
+  {
+    "productId": {"S": "prod-004"},
+    "name": {"S": "Laptop Stand"},
+    "category": {"S": "Accessories"},
+    "price": {"N": "45.99"},
+    "stock": {"N": "120"},
+    "createdAt": {"N": "1704326400"}
+  },
+  {
+    "productId": {"S": "prod-005"},
+    "name": {"S": "Webcam HD"},
+    "category": {"S": "Electronics"},
+    "price": {"N": "79.99"},
+    "stock": {"N": "60"},
+    "createdAt": {"N": "1704412800"}
+  }
+]

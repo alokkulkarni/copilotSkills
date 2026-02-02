@@ -1,8 +1,71 @@
 # AWS Lambda Function Terraform Module
 
-## Description
-
 This module creates an AWS Lambda function with comprehensive configuration options including IAM role management, VPC integration, Lambda layers support, environment variables, CloudWatch logging, X-Ray tracing, and Function URLs. Designed for production use with best practices built-in.
+
+## Quick Start Command Reference
+
+### Most Common Operations
+
+```bash
+# Initialize with S3 backend
+terraform init
+
+# Plan/Apply specific components
+terraform apply -target=module.lambda.aws_lambda_function.this              # Lambda function only
+terraform apply -target=module.lambda.aws_iam_role.lambda_role              # IAM role only
+terraform apply -target=module.lambda.aws_lambda_function_url.this          # Function URL only
+terraform apply -target=module.lambda.aws_lambda_alias.this                 # Alias only
+
+# Verify state
+terraform state list                                                        # List all resources
+terraform state show 'module.lambda.aws_lambda_function.this'               # Show function details
+
+# Check S3 state
+aws s3 ls s3://my-terraform-state-bucket/lambda/                            # List state files
+```
+
+**📘 For detailed command reference, see [Terraform Commands and State Management](#terraform-commands-and-state-management) section below.**  
+**📕 For step-by-step operational procedures, see [OPERATIONS_GUIDE.md](OPERATIONS_GUIDE.md).**  
+**📗 For complete S3 state management guide, see [STATE_MANAGEMENT.md](STATE_MANAGEMENT.md).**
+
+## Table of Contents
+
+- [Module Structure](#module-structure)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- **[📘 Terraform Commands and State Management](#terraform-commands-and-state-management)** ⭐
+- **[📋 Module-Level vs Component-Level Operations](#module-level-vs-component-level-operations)** ⭐
+- [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
+
+### 📚 Additional Documentation
+
+- **[OPERATIONS_GUIDE.md](OPERATIONS_GUIDE.md)** - Step-by-step procedures for common operational tasks
+- **[STATE_MANAGEMENT.md](STATE_MANAGEMENT.md)** - Complete guide for S3 state backend setup and management
+
+## Module Structure
+
+The module is organized into separate, focused files for better maintainability:
+
+```
+lambda_function/
+├── main.tf                    # Core Lambda function resource
+├── iam.tf                     # IAM roles and policies
+├── logging.tf                 # CloudWatch log groups
+├── function_url.tf            # Lambda function URLs and permissions
+├── alias.tf                   # Lambda aliases and routing
+├── variables.tf               # Input variables
+├── outputs.tf                 # Output values
+├── versions.tf                # Provider version constraints
+└── README.md                  # This file
+```
+
+### Benefits of Modular Structure
+
+- **Focused Changes**: Update IAM policies without touching function configuration
+- **Clear Separation**: Each file has a single responsibility
+- **Easy Navigation**: Quickly locate resources by category
+- **Independent Testing**: Test specific components in isolation
 
 ## Features
 
@@ -611,6 +674,105 @@ module "production_lambda" {
 - Right-size memory allocation
 - Use reserved concurrency carefully (you pay for it)
 - Clean up old versions
+
+## Terraform Commands and State Management
+
+### Backend Configuration for S3 State
+
+Configure S3 backend in your root module:
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state-bucket"
+    key            = "lambda/terraform.tfstate"
+    region         = "eu-west-2"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
+  }
+}
+```
+
+### Targeted Terraform Operations
+
+#### Update Lambda Function Only
+
+```bash
+# Update function configuration
+terraform apply -target=module.lambda.aws_lambda_function.this
+
+# Update environment variables
+terraform apply -target=module.lambda.aws_lambda_function.this \
+  -var 'environment_variables={"KEY":"value"}'
+```
+
+#### Update IAM Role Only
+
+```bash
+terraform apply -target=module.lambda.aws_iam_role.lambda_role
+terraform apply -target=module.lambda.aws_iam_role_policy.lambda_inline_policy
+```
+
+#### Update Function URL Only
+
+```bash
+terraform apply -target=module.lambda.aws_lambda_function_url.this
+terraform apply -target=module.lambda.aws_lambda_permission.function_url
+```
+
+#### Update CloudWatch Logs Only
+
+```bash
+terraform apply -target=module.lambda.aws_cloudwatch_log_group.lambda_log_group
+```
+
+#### Update Alias Only
+
+```bash
+terraform apply -target=module.lambda.aws_lambda_alias.this
+```
+
+### State Verification
+
+```bash
+# List all resources
+terraform state list
+
+# Show function details
+terraform state show 'module.lambda.aws_lambda_function.this'
+
+# Check S3 state
+aws s3 ls s3://my-terraform-state-bucket/lambda/terraform.tfstate
+```
+
+## Module-Level vs Component-Level Operations
+
+### Component Mapping
+
+| Component | File | Resource Type | Target Flag Example |
+|-----------|------|---------------|---------------------|
+| **Lambda Function** | main.tf | `aws_lambda_function` | `-target=module.lambda.aws_lambda_function.this` |
+| **IAM Role** | iam.tf | `aws_iam_role` | `-target=module.lambda.aws_iam_role.lambda_role` |
+| **IAM Policies** | iam.tf | `aws_iam_role_policy` | `-target=module.lambda.aws_iam_role_policy.lambda_inline_policy` |
+| **CloudWatch Logs** | logging.tf | `aws_cloudwatch_log_group` | `-target=module.lambda.aws_cloudwatch_log_group.lambda_log_group` |
+| **Function URL** | function_url.tf | `aws_lambda_function_url` | `-target=module.lambda.aws_lambda_function_url.this` |
+| **Alias** | alias.tf | `aws_lambda_alias` | `-target=module.lambda.aws_lambda_alias.this` |
+
+### Example: Update Function Code Only
+
+```bash
+# 1. Update function zip file
+zip -r function.zip index.js
+
+# 2. Update terraform.tfvars
+source_code_hash = filebase64sha256("function.zip")
+
+# 3. Apply only function changes
+terraform apply -target=module.lambda.aws_lambda_function.this
+
+# 4. Verify
+terraform state show 'module.lambda.aws_lambda_function.this' | grep source_code_hash
+```
 
 ## Lambda Function Size Limits
 

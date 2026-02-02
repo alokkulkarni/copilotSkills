@@ -1,73 +1,12 @@
 # ============================================
-# IAM Role for Lambda Function
-# ============================================
-
-resource "aws_iam_role" "lambda_role" {
-  count = var.create_role ? 1 : 0
-
-  name               = "${var.function_name}-role"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role[0].json
-  description        = "IAM role for Lambda function ${var.function_name}"
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.function_name}-role"
-    }
-  )
-}
-
-data "aws_iam_policy_document" "lambda_assume_role" {
-  count = var.create_role ? 1 : 0
-
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-# Attach AWS managed policy for basic Lambda execution
-resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-  count = var.create_role && var.attach_cloudwatch_logs_policy ? 1 : 0
-
-  role       = aws_iam_role.lambda_role[0].name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
-# Attach VPC execution policy if function is in VPC
-resource "aws_iam_role_policy_attachment" "lambda_vpc_execution" {
-  count = var.create_role && var.vpc_config != null ? 1 : 0
-
-  role       = aws_iam_role.lambda_role[0].name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
-
-# Attach custom policies
-resource "aws_iam_role_policy_attachment" "lambda_custom_policies" {
-  count = var.create_role ? length(var.attach_policy_arns) : 0
-
-  role       = aws_iam_role.lambda_role[0].name
-  policy_arn = var.attach_policy_arns[count.index]
-}
-
-# Inline policy for Lambda function
-resource "aws_iam_role_policy" "lambda_inline_policy" {
-  count = var.create_role && var.inline_policy != null ? 1 : 0
-
-  name   = "${var.function_name}-inline-policy"
-  role   = aws_iam_role.lambda_role[0].id
-  policy = var.inline_policy
-}
-
-# ============================================
 # Lambda Function
 # ============================================
+# Core Lambda function resource
+# Related components are in separate files:
+# - iam.tf: IAM roles and policies
+# - logging.tf: CloudWatch log groups
+# - function_url.tf: Lambda function URLs
+# - alias.tf: Lambda aliases
 
 resource "aws_lambda_function" "this" {
   function_name = var.function_name
@@ -178,80 +117,4 @@ resource "aws_lambda_function" "this" {
     aws_iam_role_policy_attachment.lambda_vpc_execution,
     aws_iam_role_policy_attachment.lambda_custom_policies
   ]
-}
-
-# ============================================
-# CloudWatch Log Group
-# ============================================
-
-resource "aws_cloudwatch_log_group" "lambda_log_group" {
-  count = var.create_log_group ? 1 : 0
-
-  name              = "/aws/lambda/${var.function_name}"
-  retention_in_days = var.log_retention_days
-  kms_key_id        = var.log_kms_key_id
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.function_name}-logs"
-    }
-  )
-}
-
-# ============================================
-# Lambda Function URL (Optional)
-# ============================================
-
-resource "aws_lambda_function_url" "this" {
-  count = var.create_function_url ? 1 : 0
-
-  function_name      = aws_lambda_function.this.function_name
-  authorization_type = var.function_url_auth_type
-
-  dynamic "cors" {
-    for_each = var.function_url_cors_config != null ? [var.function_url_cors_config] : []
-    content {
-      allow_credentials = lookup(cors.value, "allow_credentials", null)
-      allow_headers     = lookup(cors.value, "allow_headers", null)
-      allow_methods     = lookup(cors.value, "allow_methods", null)
-      allow_origins     = lookup(cors.value, "allow_origins", null)
-      expose_headers    = lookup(cors.value, "expose_headers", null)
-      max_age           = lookup(cors.value, "max_age", null)
-    }
-  }
-}
-
-# ============================================
-# Lambda Permission for Function URL
-# ============================================
-
-resource "aws_lambda_permission" "function_url" {
-  count = var.create_function_url && var.function_url_auth_type == "NONE" ? 1 : 0
-
-  statement_id           = "AllowPublicFunctionURL"
-  action                 = "lambda:InvokeFunctionUrl"
-  function_name          = aws_lambda_function.this.function_name
-  principal              = "*"
-  function_url_auth_type = "NONE"
-}
-
-# ============================================
-# Lambda Alias (Optional)
-# ============================================
-
-resource "aws_lambda_alias" "this" {
-  count = var.create_alias ? 1 : 0
-
-  name             = var.alias_name
-  description      = var.alias_description
-  function_name    = aws_lambda_function.this.function_name
-  function_version = var.alias_function_version
-
-  dynamic "routing_config" {
-    for_each = var.alias_routing_config != null ? [var.alias_routing_config] : []
-    content {
-      additional_version_weights = routing_config.value.additional_version_weights
-    }
-  }
 }

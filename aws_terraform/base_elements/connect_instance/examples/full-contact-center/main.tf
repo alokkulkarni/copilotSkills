@@ -25,6 +25,17 @@ provider "aws" {
 # ============================================
 # Full Contact Center with All Features
 # ============================================
+# This example demonstrates the full capabilities of the modular Connect module.
+# Each section below maps to a dedicated module file:
+# - phone_numbers.tf: Phone number provisioning
+# - hours_of_operation.tf: Business hours configuration
+# - queues.tf: Queue resources (Sales & Support)
+# - routing_profiles.tf: Agent routing (Sales, Support, Supervisor)
+# - security_profiles.tf: Role-based access control
+# - quick_connects.tf: Fast transfer destinations
+# - users.tf: User and hierarchy management
+# - contact_flows.tf: Call flow logic
+# You can add/modify any component independently via variables.
 
 module "connect" {
   source = "../../"

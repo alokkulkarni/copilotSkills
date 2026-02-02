@@ -2,6 +2,18 @@
 
 This example demonstrates deploying a minimal Amazon Connect instance with basic configuration.
 
+## Module Structure
+
+This example uses the modular Connect instance module. Resources are organized into focused files:
+- **Instance**: Core Connect configuration (main.tf)
+- **Hours of Operation**: Business hours (hours_of_operation.tf)
+- **Queues**: Queue management (queues.tf)
+- **Routing Profiles**: Agent routing (routing_profiles.tf)
+- **Security Profiles**: Access control (security_profiles.tf)
+- **Users**: User management (users.tf)
+
+Each component can be independently managed by modifying the corresponding variables.
+
 ## Features
 
 - Simple Connect instance deployment
