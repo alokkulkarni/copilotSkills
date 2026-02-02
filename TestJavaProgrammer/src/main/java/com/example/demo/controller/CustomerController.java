@@ -12,8 +12,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -21,8 +24,9 @@ import org.springframework.web.bind.annotation.*;
  * Provides endpoints for CRUD operations on customers.
  */
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/api/v1/customers")
 @Tag(name = "Customers", description = "Customer management operations")
+@Validated
 public class CustomerController {
 
     private final CustomerServiceInterface service;
@@ -55,9 +59,9 @@ public class CustomerController {
     @GetMapping
     public PageResponse<Customer> getAllCustomers(
             @Parameter(description = "Page number (zero-based)", example = "0")
-            @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Number of records per page", example = "20")
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @Parameter(description = "Number of records per page (max 100)", example = "20")
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         return service.getAllCustomersPaged(page, size);
     }
 

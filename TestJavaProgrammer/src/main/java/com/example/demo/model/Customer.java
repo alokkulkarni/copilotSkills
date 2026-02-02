@@ -3,6 +3,7 @@ package com.example.demo.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 /**
  * Represents a customer entity with validation constraints.
@@ -16,6 +17,9 @@ import jakarta.validation.constraints.NotBlank;
 public record Customer(
         @Schema(description = "Unique identifier for the customer (UUID format)", 
                 example = "123e4567-e89b-12d3-a456-426614174000")
+        @Pattern(regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                 message = "ID must be a valid UUID format",
+                 flags = Pattern.Flag.CASE_INSENSITIVE)
         String id,
         
         @Schema(description = "Full name of the customer", example = "John Doe", requiredMode = Schema.RequiredMode.REQUIRED)

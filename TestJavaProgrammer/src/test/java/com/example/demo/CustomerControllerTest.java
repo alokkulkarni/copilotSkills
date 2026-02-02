@@ -60,7 +60,7 @@ class CustomerControllerTest {
     }
 
     @Nested
-    @DisplayName("GET /api/customers - List Customers")
+    @DisplayName("GET /api/v1/customers - List Customers")
     class GetAllCustomersTests {
 
         @Test
@@ -75,7 +75,7 @@ class CustomerControllerTest {
             when(service.getAllCustomersPaged(0, 20)).thenReturn(pageResponse);
 
             // Act & Assert
-            mockMvc.perform(get("/api/customers"))
+            mockMvc.perform(get("/api/v1/customers"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content").isArray())
                     .andExpect(jsonPath("$.content.length()").value(2))
@@ -96,7 +96,7 @@ class CustomerControllerTest {
             when(service.getAllCustomersPaged(1, 2)).thenReturn(pageResponse);
 
             // Act & Assert
-            mockMvc.perform(get("/api/customers")
+            mockMvc.perform(get("/api/v1/customers")
                             .param("page", "1")
                             .param("size", "2"))
                     .andExpect(status().isOk())
@@ -118,7 +118,7 @@ class CustomerControllerTest {
             when(service.getAllCustomersPaged(page, size)).thenReturn(emptyResponse);
 
             // Act & Assert
-            mockMvc.perform(get("/api/customers")
+            mockMvc.perform(get("/api/v1/customers")
                             .param("page", String.valueOf(page))
                             .param("size", String.valueOf(size)))
                     .andExpect(status().isOk())
@@ -131,7 +131,7 @@ class CustomerControllerTest {
     }
 
     @Nested
-    @DisplayName("GET /api/customers/{id} - Get Customer by ID")
+    @DisplayName("GET /api/v1/customers/{id} - Get Customer by ID")
     class GetCustomerByIdTests {
 
         @Test
@@ -142,7 +142,7 @@ class CustomerControllerTest {
             when(service.getCustomer("1")).thenReturn(Optional.of(customer));
 
             // Act & Assert
-            mockMvc.perform(get("/api/customers/1"))
+            mockMvc.perform(get("/api/v1/customers/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value("1"))
                     .andExpect(jsonPath("$.name").value("John Doe"));
@@ -157,7 +157,7 @@ class CustomerControllerTest {
             when(service.getCustomer("99")).thenReturn(Optional.empty());
 
             // Act & Assert
-            mockMvc.perform(get("/api/customers/99"))
+            mockMvc.perform(get("/api/v1/customers/99"))
                     .andExpect(status().isNotFound());
 
             verify(service).getCustomer("99");
@@ -165,7 +165,7 @@ class CustomerControllerTest {
     }
 
     @Nested
-    @DisplayName("POST /api/customers - Create Customer")
+    @DisplayName("POST /api/v1/customers - Create Customer")
     class CreateCustomerTests {
 
         @Test
@@ -177,7 +177,7 @@ class CustomerControllerTest {
             when(service.addCustomer(any(Customer.class))).thenReturn(output);
 
             // Act & Assert
-            mockMvc.perform(post("/api/customers")
+            mockMvc.perform(post("/api/v1/customers")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(input)))
                     .andExpect(status().isCreated())
@@ -194,7 +194,7 @@ class CustomerControllerTest {
             Customer input = CustomerTestBuilder.invalidCustomer();
 
             // Act & Assert
-            mockMvc.perform(post("/api/customers")
+            mockMvc.perform(post("/api/v1/customers")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(input)))
                     .andExpect(status().isBadRequest())
@@ -207,7 +207,7 @@ class CustomerControllerTest {
     }
 
     @Nested
-    @DisplayName("PUT /api/customers/{id} - Update Customer")
+    @DisplayName("PUT /api/v1/customers/{id} - Update Customer")
     class UpdateCustomerTests {
 
         @Test
@@ -219,7 +219,7 @@ class CustomerControllerTest {
             when(service.updateCustomer(eq("1"), any(Customer.class))).thenReturn(Optional.of(output));
 
             // Act & Assert
-            mockMvc.perform(put("/api/customers/1")
+            mockMvc.perform(put("/api/v1/customers/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(input)))
                     .andExpect(status().isOk())
@@ -237,7 +237,7 @@ class CustomerControllerTest {
             when(service.updateCustomer(eq("99"), any(Customer.class))).thenReturn(Optional.empty());
 
             // Act & Assert
-            mockMvc.perform(put("/api/customers/99")
+            mockMvc.perform(put("/api/v1/customers/99")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(input)))
                     .andExpect(status().isNotFound());
@@ -252,7 +252,7 @@ class CustomerControllerTest {
             Customer input = CustomerTestBuilder.invalidCustomer();
 
             // Act & Assert
-            mockMvc.perform(put("/api/customers/1")
+            mockMvc.perform(put("/api/v1/customers/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(input)))
                     .andExpect(status().isBadRequest())
@@ -264,7 +264,7 @@ class CustomerControllerTest {
     }
 
     @Nested
-    @DisplayName("DELETE /api/customers/{id} - Delete Customer")
+    @DisplayName("DELETE /api/v1/customers/{id} - Delete Customer")
     class DeleteCustomerTests {
 
         @Test
@@ -274,7 +274,7 @@ class CustomerControllerTest {
             when(service.deleteCustomer("1")).thenReturn(true);
 
             // Act & Assert
-            mockMvc.perform(delete("/api/customers/1"))
+            mockMvc.perform(delete("/api/v1/customers/1"))
                     .andExpect(status().isNoContent());
 
             verify(service).deleteCustomer("1");
@@ -287,7 +287,7 @@ class CustomerControllerTest {
             when(service.deleteCustomer("99")).thenReturn(false);
 
             // Act & Assert
-            mockMvc.perform(delete("/api/customers/99"))
+            mockMvc.perform(delete("/api/v1/customers/99"))
                     .andExpect(status().isNotFound());
 
             verify(service).deleteCustomer("99");
@@ -307,7 +307,7 @@ class CustomerControllerTest {
                 String expectedField) throws Exception {
 
             // Act & Assert
-            mockMvc.perform(post("/api/customers")
+            mockMvc.perform(post("/api/v1/customers")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(invalidCustomer)))
                     .andExpect(status().isBadRequest())
@@ -325,7 +325,7 @@ class CustomerControllerTest {
                 String expectedField) throws Exception {
 
             // Act & Assert
-            mockMvc.perform(put("/api/customers/1")
+            mockMvc.perform(put("/api/v1/customers/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(invalidCustomer)))
                     .andExpect(status().isBadRequest())
@@ -347,7 +347,7 @@ class CustomerControllerTest {
                     .thenThrow(new RuntimeException("Database connection failed"));
 
             // Act & Assert
-            mockMvc.perform(get("/api/customers"))
+            mockMvc.perform(get("/api/v1/customers"))
                     .andExpect(status().isInternalServerError())
                     .andExpect(jsonPath("$.status").value(500))
                     .andExpect(jsonPath("$.message").value("Database connection failed"));

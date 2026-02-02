@@ -4,7 +4,7 @@
 [![CodeQL](https://github.com/alokkulkarni/copilotSkills/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/alokkulkarni/copilotSkills/actions/workflows/codeql-analysis.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Java Version](https://img.shields.io/badge/Java-17-blue.svg)](https://openjdk.org/projects/jdk/17/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.2-green.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.1-green.svg)](https://spring.io/projects/spring-boot)
 [![Test Coverage](https://img.shields.io/badge/Tests-61%20passed-brightgreen.svg)]()
 
 A production-ready Spring Boot REST API for customer management with local JSON file persistence, comprehensive testing, and Docker support.
@@ -36,6 +36,31 @@ A production-ready Spring Boot REST API for customer management with local JSON 
 - **Thread-Safe Repository** - Synchronized file operations for concurrent access
 - **Docker Ready** - Multi-stage Dockerfile with health checks and non-root user
 - **CI/CD Pipelines** - GitHub Actions for build, test, and security analysis
+- **API Versioning** - Version 1 API at `/api/v1/customers`
+
+## ⚠️ Limitations & Production Considerations
+
+### File-Based Storage Constraints
+
+This application uses **local JSON file persistence** for simplicity and demonstration purposes. Be aware of the following limitations:
+
+- **❌ Not Production-Ready for Scale**: File-based storage suitable for demos, POCs, and local development only
+- **❌ Limited Concurrency**: Synchronized file I/O becomes a bottleneck under concurrent load
+- **❌ No Transaction Support**: Risk of data corruption on application crash during write operations
+- **❌ No Advanced Querying**: Cannot filter, search, or index data without loading entire file
+- **❌ Memory Constraints**: Entire dataset loaded into memory on each operation
+- **❌ No Clustering**: Cannot run multiple instances sharing the same data
+
+### Migration Path for Production
+
+For production deployments, consider migrating to:
+
+1. **Spring Data JPA + H2**: Quick migration, embedded database
+2. **Spring Data JPA + PostgreSQL/MySQL**: Full-featured relational database
+3. **Spring Data MongoDB**: Document-based storage if schema flexibility needed
+4. **Spring Data Redis**: For caching and high-performance scenarios
+
+**Recommended**: Use this implementation as a learning resource or prototype, then migrate to a proper database before production deployment.
 
 ## Prerequisites
 
@@ -124,7 +149,7 @@ Once running, access the interactive API documentation:
 ### Create Customer
 
 ```bash
-curl -X POST http://localhost:8080/api/customers \
+curl -X POST http://localhost:8080/api/v1/customers \
   -H "Content-Type: application/json" \
   -d '{"name": "John Doe", "email": "john@example.com"}'
 ```
@@ -141,7 +166,7 @@ curl -X POST http://localhost:8080/api/customers \
 ### Get All Customers (Paginated)
 
 ```bash
-curl "http://localhost:8080/api/customers?page=0&size=10"
+curl "http://localhost:8080/api/v1/customers?page=0&size=10"
 ```
 
 **Response** (200 OK):
