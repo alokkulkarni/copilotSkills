@@ -91,7 +91,7 @@ Create a structured implementation plan:
 **CRITICAL**: Present the plan to user and **wait for user approval** before proceeding to execution
 
 ### Step 4: Execution Phase
-**Announce**: "⚙️ **EXECUTE MODE**: Implementing solution step by step..."
+**Announce**: "⚙️ **EXECUTE MODE**: Implementing solution step by step using TDD..."
 
 **CRITICAL: Git Branch Strategy (MANDATORY BEFORE ANY CODE CHANGES)**
 
@@ -114,13 +114,47 @@ Before making ANY code modifications:
 3. **Inform User**:
    - "✅ Created branch: `feature/{branch-name}`"
    - "All changes will be made in this branch"
+   - "Following TDD approach: Tests first, then implementation"
    - "A PR will be created for review after implementation"
+
+**CRITICAL - TDD (Test-Driven Development) Approach (MANDATORY):**
+
+**ALWAYS follow the Red-Green-Refactor cycle:**
+
+1. **RED - Write Failing Test FIRST**:
+   - **Announce**: "🔴 RED: Writing failing test for [feature/method]..."
+   - Write the test BEFORE writing implementation code
+   - Define expected behavior through tests
+   - Ensure test fails (proves test is valid)
+   - Keep user informed: "Test written and failing as expected ✓"
+
+2. **GREEN - Write Minimal Code to Pass Test**:
+   - **Announce**: "🟢 GREEN: Implementing code to pass the test..."
+   - Write only enough code to make the test pass
+   - Don't optimize prematurely
+   - Run test and verify it passes
+   - Keep user informed: "Test passing ✓"
+
+3. **REFACTOR - Improve Code Quality**:
+   - **Announce**: "🔵 REFACTOR: Improving code quality..."
+   - Clean up code while keeping tests green
+   - Apply design patterns and best practices
+   - Remove duplication
+   - Verify all tests still pass
+   - Keep user informed: "Refactoring complete, all tests passing ✓"
+
+4. **Repeat for Each Feature/Method**:
+   - Follow Red-Green-Refactor for every new piece of functionality
+   - Build incrementally, one test at a time
+   - Commit after each successful cycle
 
 **Break Down and Solve Step by Step:**
 - Implement the solution incrementally, one step at a time
+- **Write test FIRST for each component** (TDD)
+- Implement code to pass the test
+- Refactor and improve
 - Complete each component before moving to the next
-- Test each step as you go to validate correctness
-- Keep user informed of progress: "Implementing [Component/Feature]..."
+- Keep user informed of progress: "🔴 Writing test for [Component]..." → "🟢 Implementing [Component]..." → "🔵 Refactoring..."
 - Commit changes incrementally with clear commit messages
 
 Write clean, maintainable Java code following best practices:
