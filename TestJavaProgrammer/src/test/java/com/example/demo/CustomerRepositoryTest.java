@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.config.DataStorageProperties;
 import com.example.demo.model.Customer;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.testutil.CustomerTestBuilder;
@@ -36,13 +37,16 @@ class CustomerRepositoryTest {
 
     private CustomerRepository repository;
     private ObjectMapper objectMapper;
+    private DataStorageProperties storageProperties;
     private File testFile;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
         testFile = tempDir.resolve("test-customers.json").toFile();
-        repository = new CustomerRepository(objectMapper, testFile.getAbsolutePath());
+        storageProperties = new DataStorageProperties();
+        storageProperties.setFile(testFile.getAbsolutePath());
+        repository = new CustomerRepository(objectMapper, storageProperties);
     }
 
     @AfterEach
@@ -202,7 +206,9 @@ class CustomerRepositoryTest {
             repository.save(CustomerTestBuilder.validCustomer());
 
             // Act - create new repository instance pointing to same file
-            CustomerRepository newRepository = new CustomerRepository(objectMapper, testFile.getAbsolutePath());
+            DataStorageProperties newProps = new DataStorageProperties();
+            newProps.setFile(testFile.getAbsolutePath());
+            CustomerRepository newRepository = new CustomerRepository(objectMapper, newProps);
             List<Customer> customers = newRepository.findAll();
 
             // Assert

@@ -3,7 +3,6 @@ package com.example.demo.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -17,8 +16,20 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
+    private final CorsProperties corsProperties;
+
+    /**
+     * Constructs CorsConfig with injected properties.
+     *
+     * @param corsProperties the CORS configuration properties
+     */
+    public CorsConfig(CorsProperties corsProperties) {
+        this.corsProperties = corsProperties;
+    }
+
     /**
      * Configures CORS settings to allow requests from the React frontend.
+     * Origins are externalized to application.properties for environment-specific configuration.
      * 
      * @return CorsFilter with configured CORS settings
      */
@@ -30,14 +41,8 @@ public class CorsConfig {
         // Allow credentials (cookies, authorization headers)
         config.setAllowCredentials(true);
         
-        // Allow requests from React development server and production origins
-        config.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000",    // React dev server (Vite default)
-            "http://localhost:5173",    // Alternative Vite port
-            "http://localhost:4173",    // Vite preview port
-            "http://127.0.0.1:3000",
-            "http://127.0.0.1:5173"
-        ));
+        // Allow requests from configured origins (from application.properties)
+        config.setAllowedOrigins(corsProperties.getAllowedOrigins());
         
         // Allow all headers
         config.setAllowedHeaders(List.of("*"));

@@ -1,11 +1,15 @@
 package com.example.demo.repository;
 
+import com.example.demo.config.DataStorageProperties;
+import com.example.demo.exception.DataStorageException;
 import com.example.demo.model.Customer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import jakarta.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,43 +23,56 @@ import java.util.Optional;
 @Repository
 public class CustomerRepository implements CustomerRepositoryInterface {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerRepository.class);
+
     private final ObjectMapper objectMapper;
+    private final DataStorageProperties storageProperties;
     private final File file;
 
     /**
-     * Constructs a CustomerRepository with the specified ObjectMapper and file path.
+     * Constructs a CustomerRepository with the specified ObjectMapper and storage properties.
      * Initializes the data file if it does not exist.
      *
-     * @param objectMapper the Jackson ObjectMapper for JSON serialization
-     * @param filePath     the path to the JSON file for storing customer data
-     * @throws RuntimeException if the file cannot be initialized
+     * @param objectMapper      the Jackson ObjectMapper for JSON serialization
+     * @param storageProperties the data storage configuration properties
+     * @throws DataStorageException if the file cannot be initialized
      */
     public CustomerRepository(
             ObjectMapper objectMapper,
-            @Value("${app.data.file:customers.json}") String filePath) {
+            DataStorageProperties storageProperties) {
         this.objectMapper = objectMapper;
-        this.file = new File(filePath);
+        this.storageProperties = storageProperties;
+        this.file = new File(storageProperties.getFile());
         if (!file.exists()) {
             try {
                 objectMapper.writeValue(file, new ArrayList<Customer>());
             } catch (IOException e) {
-                throw new RuntimeException("Could not initialize customer file", e);
+                throw new DataStorageException("Could not initialize customer file", e);
             }
         }
+    }
+
+    /**
+     * Logs a warning on application startup about file-based storage limitations.
+     */
+    @PostConstruct
+    public void init() {
+        log.warn("⚠️ Using file-based storage ({}). Not suitable for production. See README for migration options.",
+                storageProperties.getFile());
     }
 
     /**
      * Retrieves all customers from the data file.
      *
      * @return a list of all customers
-     * @throws RuntimeException if the file cannot be read
+     * @throws DataStorageException if the file cannot be read
      */
     @Override
     public synchronized List<Customer> findAll() {
         try {
             return objectMapper.readValue(file, new TypeReference<List<Customer>>() {});
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read customers", e);
+            throw new DataStorageException("Failed to read customers", e);
         }
     }
 
@@ -78,7 +95,7 @@ public class CustomerRepository implements CustomerRepositoryInterface {
      *
      * @param customer the customer to save
      * @return the saved customer
-     * @throws RuntimeException if the file cannot be written
+     * @throws DataStorageException if the file cannot be written
      */
     @Override
     public synchronized Customer save(Customer customer) {
@@ -94,7 +111,7 @@ public class CustomerRepository implements CustomerRepositoryInterface {
      *
      * @param id the unique identifier of the customer to delete
      * @return true if the customer was deleted, false if not found
-     * @throws RuntimeException if the file cannot be written
+     * @throws DataStorageException if the file cannot be written
      */
     @Override
     public synchronized boolean deleteById(String id) {
@@ -110,13 +127,13 @@ public class CustomerRepository implements CustomerRepositoryInterface {
      * Writes the list of customers to the data file.
      *
      * @param customers the list of customers to persist
-     * @throws RuntimeException if the file cannot be written
+     * @throws DataStorageException if the file cannot be written
      */
     private void writeCustomers(List<Customer> customers) {
         try {
             objectMapper.writeValue(file, customers);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to write customers", e);
+            throw new DataStorageException("Failed to write customers", e);
         }
     }
 }
