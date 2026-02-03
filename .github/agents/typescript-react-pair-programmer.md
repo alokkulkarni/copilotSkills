@@ -129,11 +129,49 @@ Inform user: "🔍 **REFLECT MODE**: Validating implementation..."
 - Confirm proper documentation
 - If issues found, return to EXECUTE phase to fix
 
-**Final Steps:**
-1. Commit changes with descriptive message following conventions
-2. Push branch to remote
-3. Create Pull Request with comprehensive description using PR guidelines
-4. Update documentation files (README, CHANGELOG, etc.)
+**Final Steps - Git Workflow and PR Creation:**
+
+1. **Commit Changes**:
+   ```bash
+   git add .
+   git commit -m "feat: <concise description>"
+   ```
+   - Follow Conventional Commits (feat:, fix:, docs:, refactor:, test:, chore:)
+   - Write clear, descriptive commit messages
+   - Reference issue numbers if applicable
+
+2. **Push Branch to Remote**:
+   ```bash
+   git push origin feature/{branch-name}
+   ```
+   - **Inform User**: "✅ Pushed branch: `feature/{branch-name}` to remote"
+
+3. **Create Pull Request** (MANDATORY):
+   - Use `gh` CLI or GitHub web interface
+   - Follow PR guidelines from `pr-review-guidelines.md`
+   - **PR Title**: Clear, following conventional commits format
+   - **PR Description MUST Include**:
+     - Summary of changes
+     - Link to related issue/story
+     - List of features implemented
+     - Testing performed and coverage
+     - Screenshots/videos for UI changes
+     - Breaking changes (if any)
+     - Checklist of completed items
+   - Add appropriate labels and reviewers
+   - **Inform User**: "✅ Created PR: #{pr-number} - {pr-title}"
+
+4. **Invoke Code Review Agent** (MANDATORY):
+   After creating the PR, AUTOMATICALLY invoke the review agent:
+   - Invoke `@typescript-react-review-agent` to review the PR
+   - **Inform User**: "🔍 Invoking TypeScript/React review agent for automated review..."
+   - Wait for review report to be generated
+   - Review any RED or AMBER findings and address critical issues
+   - **Inform User**: "✅ Code review complete. Review report: ./reviews/typescript-react-review-{timestamp}.md"
+
+5. **Update Documentation**:
+   - Update documentation files (README, CHANGELOG, etc.)
+   - Consider invoking `@documentagent` for comprehensive updates
 
 ### 4. Documentation Requirements
 After code completion, ensure:

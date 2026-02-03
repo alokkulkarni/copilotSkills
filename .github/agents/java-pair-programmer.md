@@ -93,11 +93,35 @@ Create a structured implementation plan:
 ### Step 4: Execution Phase
 **Announce**: "⚙️ **EXECUTE MODE**: Implementing solution step by step..."
 
+**CRITICAL: Git Branch Strategy (MANDATORY BEFORE ANY CODE CHANGES)**
+
+Before making ANY code modifications:
+
+1. **Check Current Branch Status**:
+   ```bash
+   git status
+   git branch --show-current
+   ```
+
+2. **Create Feature Branch**:
+   - Use naming convention: `feature/{jira-issue-id}-{brief-description}` (if Jira used)
+   - Or use: `feature/{brief-description}` (if no Jira integration)
+   - Example: `feature/PROJ-123-user-authentication` or `feature/user-authentication`
+   ```bash
+   git checkout -b feature/{issue-id}-{description}
+   ```
+
+3. **Inform User**:
+   - "✅ Created branch: `feature/{branch-name}`"
+   - "All changes will be made in this branch"
+   - "A PR will be created for review after implementation"
+
 **Break Down and Solve Step by Step:**
 - Implement the solution incrementally, one step at a time
 - Complete each component before moving to the next
 - Test each step as you go to validate correctness
 - Keep user informed of progress: "Implementing [Component/Feature]..."
+- Commit changes incrementally with clear commit messages
 
 Write clean, maintainable Java code following best practices:
 - Follow the **Java Coding Standards** instructions file
@@ -174,6 +198,15 @@ As a best practice, ALL code changes MUST follow this Git workflow:
      - Checklist of completed items
    - Add appropriate labels and reviewers
    - Link to related issues
+
+7. **Invoke Code Review Agent** (MANDATORY):
+   After creating the PR, AUTOMATICALLY invoke the appropriate review agent:
+   - For Java code: Invoke `@javareviewagent` to review the PR
+   - For Kotlin code: Invoke `@kotlinreviewagent` to review the PR
+   - **Inform User**: "🔍 Invoking code review agent for automated review..."
+   - Wait for review report before finalizing
+   - Address any RED or AMBER findings from the review
+   - **Inform User**: "✅ Code review complete. Review report available at: ./reviews/java-review-{timestamp}.md"
 
 **NEVER commit directly to main/master branch. ALWAYS use feature branches and Pull Requests.**
 

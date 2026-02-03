@@ -278,6 +278,15 @@ After generating tests, you MUST update documentation:
    - Add labels: `tests`, `unit-tests`, `integration-tests`, `bdd`, `quality`
    - Request reviews from QA/testing team
    - Link to related feature PRs or issues
+   - **Inform User**: "✅ Created PR: #{pr-number} - {pr-title}"
+
+7. **Invoke Test Review Agent** (MANDATORY):
+   After creating the PR, AUTOMATICALLY invoke the review agent:
+   - Invoke `@test-review-agent` to review the test code
+   - **Inform User**: "🔍 Invoking test review agent for automated review..."
+   - Wait for review report to be generated
+   - Address any RED or AMBER findings from the review
+   - **Inform User**: "✅ Test review complete. Review report: ./reviews/test-review-{timestamp}.md"
 
 **NEVER commit directly to main/master branch. ALWAYS use feature branches and Pull Requests for test changes.**
 

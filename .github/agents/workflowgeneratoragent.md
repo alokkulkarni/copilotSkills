@@ -183,6 +183,15 @@ After generating workflows:
    - Add labels: `ci`, `cd`, `workflows`, `automation`
    - Request reviews from DevOps/platform team
    - Link to related issues or documentation
+   - **Inform User**: "✅ Created PR: #{pr-number} - {pr-title}"
+
+7. **Invoke Workflow Review Agent** (MANDATORY):
+   After creating the PR, AUTOMATICALLY invoke the review agent:
+   - Invoke `@workflowsreviewagent` to review the workflow files
+   - **Inform User**: "🔍 Invoking workflow review agent for automated review..."
+   - Wait for review report to be generated
+   - Address any RED or AMBER findings from the review
+   - **Inform User**: "✅ Workflow review complete. Review report: ./reviews/workflow-review-{timestamp}.md"
 
 **NEVER commit directly to main/master branch. ALWAYS use feature branches and Pull Requests for workflow changes.**
 

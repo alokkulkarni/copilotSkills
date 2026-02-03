@@ -176,6 +176,20 @@ Always refer to the checklist in the instructions file when following guidelines
      - Checklist of completed items
    - Add labels: `infrastructure`, `terraform`, provider tag (e.g., `aws`, `azure`)
    - Request reviews from infrastructure/DevOps team
+   - **Inform User**: "✅ Created PR: #{pr-number} - {pr-title}"
+
+7. **Invoke Terraform Review Agent** (MANDATORY):
+   After creating the PR, AUTOMATICALLY invoke the review agent:
+   - Invoke `@terraform-reviewer` to review the infrastructure code
+   - **Inform User**: "🔍 Invoking Terraform review agent for automated review..."
+   - Wait for review report to be generated
+   - Address any RED or AMBER findings from the review
+   - **Inform User**: "✅ Terraform review complete. Review report: ./reviews/terraform-review-{timestamp}.md"
+
+8. **Update Documentation**:
+   - Update infrastructure documentation and README files
+   - Document new resources and their purpose
+   - Update architecture diagrams if applicable
 
 **NEVER commit directly to main/master branch. ALWAYS use feature branches and Pull Requests for infrastructure changes.**
 
